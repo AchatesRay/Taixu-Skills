@@ -7,8 +7,9 @@ compatible_with: "hegel-v2-design 2026-06-09"
 
 # 规格化桥接透镜（lens-specification-bridge）
 
-> 将 hegel 收敛报告的 findings[] 转化为结构化的 requirements doc（PF + R-numbered + SC-numbered），作为 ce-plan/ce-brainstorm 的直接输入。
+> 将 hegel 收敛报告的 findings[] 转化为结构化的 requirements doc（PF + R-numbered + SC-numbered），作为 liam-plan 的直接输入。
 > 解决 GENE:spec-gate 指出的「太虚产出≠规格化产出」断层。
+> 支持 --spec-only 快速模式：跳过完整收敛循环，直接从用户输入生成 requirements doc（吸收原 ce-brainstorm 的 Q&A 规格化能力）。
 
 ---
 
@@ -105,7 +106,7 @@ compatible_with: "hegel-v2-design 2026-06-09"
 | 原则 | deterministic | epistemic | ontological |
 |------|--------------|-----------|-------------|
 | P1 发现 | spec-bridge-extract（从 findings[] 筛选+判定） | spec-bridge-extract | spec-bridge-extract |
-| P2 校准 | 格式校验（PF/R/SC 结构完整性） | 可行性交叉评估（ce-brainstorm 预审） | 情景建模（多情境下的 requirement 稳定性） |
+| P2 校准 | 格式校验（PF/R/SC 结构完整性） | 可行性交叉评估（hegel 内部预审） | 情景建模（多情境下的 requirement 稳定性） |
 | P3 偏差 | feynman F1+F3（假设验证+过度精确化） | feynman F2+F5（框架+自证） | feynman F2+F3（框架+过度精确化） |
 | P4 深化 | 拆分测试（"这条 requirement 能否再拆？"） | 依赖追溯（"前置条件是否明确？"） | 鲁棒性测试（"需求变更后 requirement 是否仍有效？"） |
 | P5 闭环 | 结构完整性检查 | 可行性确认 | 稳定性检查 |
@@ -149,9 +150,9 @@ compatible_with: "hegel-v2-design 2026-06-09"
 
 | 策略 | 方法 | 路由信号（claim_type） | 对应 skill |
 |------|------|----------------------|-----------|
-| D1 拆分测试 | "这条 requirement 能否拆分为更小的独立单元？" | evaluative, prescriptive | ce-brainstorm |
-| D2 依赖追溯 | 追踪 requirement 的前置条件和下游消费者 | causal | ce-brainstorm |
-| D3 边界探测 | 找边界情况：需求变更、资源缩减、时间压缩时 requirement 是否仍有效 | factual（边界型） | ce-brainstorm |
+| D1 拆分测试 | "这条 requirement 能否拆分为更小的独立单元？" | evaluative, prescriptive | hegel 内部 |
+| D2 依赖追溯 | 追踪 requirement 的前置条件和下游消费者 | causal | hegel 内部 |
+| D3 边界探测 | 找边界情况：需求变更、资源缩减、时间压缩时 requirement 是否仍有效 | factual（边界型） | hegel 内部 |
 | D4 复现验证 | 用独立视角重新评估同一 finding 的规格化价值 | factual（核心型） | ce-doc-review |
 
 ---
@@ -177,6 +178,45 @@ compatible_with: "hegel-v2-design 2026-06-09"
 | 依赖完整性 | 依赖链完整且无环的 confidence 上调；有缺失的上报 spec_blocked |
 | PF 对齐度 | 在 PF 范围内的 confidence 保持；超出范围的上报 scope_mismatch |
 | 利益相关方确认 | 获得确认的 confidence 上调；未确认的标注 pending_approval |
+
+---
+
+## --spec-only 快速规格化模式
+
+跳过完整收敛循环（S3-S5），直接从用户输入或 osborn idea-pool 生成 requirements doc。适用于：
+- 用户只需要需求文档，不需要深度分析
+- 主题已通过 osborn P0-clarify 澄清，无需进一步发散
+- 快速对齐场景（Lightweight/Standard 级别需求）
+
+### 执行流程
+
+1. **输入评估**：接收用户描述或 idea-pool.md，评估信息充分度
+2. **渐进式澄清**（可选）：若输入模糊，2-3 轮 Q&A 澄清（吸收原 ce-brainstorm 的交互规则）
+3. **结构化转化**：将输入直接转化为 PF + R-numbered + SC-numbered 格式
+4. **质量门控**：PF≥1句 + R≥3 + SC≥2（与完整模式相同的 spec-gate 标准）
+5. **输出**：写入 `docs/hegel-reports/{target_slug}-spec-{date}.md`
+
+### 与完整模式的对比
+
+| 维度 | 完整模式（默认） | --spec-only |
+|------|----------------|-------------|
+| 收敛循环 | S3-S5 多轮迭代 | 跳过 |
+| bayes 验证 | 每条 finding 验证 | 跳过 |
+| feynman 审查 | 六原则审查 | 跳过 |
+| 产出质量 | 高（经验证） | 中（基于用户输入） |
+| 耗时 | 10-30min | 3-8min |
+| 适用场景 | 重要决策、复杂需求 | 快速对齐、简单需求 |
+
+### 交互规则
+
+--spec-only 模式的 Q&A 交互遵循与 osborn P0-clarify 相同的规则：一次一问、优先 blocking question 工具、scope tiering（Quick/Standard/Full）。
+
+### 产出格式
+
+与完整模式相同的 PF + R-numbered + SC-numbered 格式。额外包含：
+- **Key Decisions**：规格化过程中做出的关键决策
+- **Scope Boundaries**：明确的范围边界
+- **Open Questions**：未解决的问题（留给后续 liam-plan 或完整五转）
 
 ---
 
@@ -229,4 +269,4 @@ S7 产出的 requirements doc 结构：
 {超出 PF 范围的 finding，记录但不转化}
 ```
 
-此格式可直接作为 ce-plan 的输入，满足 GENE:spec-gate 要求的「PF≥1句 + R≥3 + SC≥2」。
+此格式可直接作为 liam-plan 的输入，满足 GENE:spec-gate 要求的「PF≥1句 + R≥3 + SC≥2」。

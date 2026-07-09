@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1,
+    "prompt": "收敛这个 idea-pool: docs/osborn-pools/wechat-ingest-2026-06-22.md（145个想法，投资类主题）",
+    "expected": "1-3轮收敛，产出≥15条断言，压缩率≥70%，有盲区列表，terminal_status=converged",
+    "type": "happy_path",
+    "check_points": [
+      "S1 读取 idea-pool 的 dimensions 字段",
+      "S2 将想法聚类为断言",
+      "Rigor Gate 执行（排除无证据断言）",
+      "收敛状态判定（converged/truncated/diverged）",
+      "产出 report 含 axioms/parameters/contradictions",
+      "盲区识别≥2条",
+      "压缩率 = 1 - 断言数/想法数 ≥ 70%"
+    ]
+  },
+  {
+    "id": 2,
+    "prompt": "收敛这个 idea-pool: .agents/tmp/osborn-pool-problem-type-routing-2026-06-29.md（86个想法，pipeline设计主题）",
+    "expected": "2轮收敛，产出核心结论，convergence_confidence≥0.8",
+    "type": "happy_path",
+    "check_points": [
+      "S1 正确识别 problem_type=mixed",
+      "S2 聚类为断言",
+      "2轮内收敛",
+      "convergence_confidence≥0.8",
+      "产出含核心结论段",
+      "contradictions_resolved≥3"
+    ]
+  },
+  {
+    "id": 3,
+    "prompt": "收敛一个高度发散的 idea-pool（200+想法，覆盖7个不相关维度，无明确主题）",
+    "expected": "可能无法收敛，terminal_status=diverged 或 truncated，应有盲区报告",
+    "type": "edge_case",
+    "check_points": [
+      "检测到发散信号（跨维度想法无法聚类）",
+      "达到 max_rounds 后标注 truncated 或 diverged",
+      "仍产出部分断言（已收敛的子集）",
+      "盲区报告标注'主题过于发散'",
+      "不假收敛（不强行产出收敛结论）"
+    ]
+  },
+  {
+    "id": 4,
+    "prompt": "收敛一个只有5个想法的 idea-pool",
+    "expected": "快速收敛或建议补充发散，不应强制产出大量断言",
+    "type": "edge_case",
+    "check_points": [
+      "识别想法不足信号（<15）",
+      "建议回 osborn 补充发散 或 直接收敛已有5个",
+      "若收敛：断言数≤3",
+      "不注水（不强行拆分5个想法为10条断言）"
+    ]
+  },
+  {
+    "id": 5,
+    "prompt": "收敛一个空 idea-pool（文件存在但无内容）",
+    "expected": "拒绝处理，提示上游 osborn 无产出",
+    "type": "negative",
+    "check_points": [
+      "检测到空输入",
+      "不生成假断言",
+      "提示用户回 osborn 重新发散",
+      "report 中标注 rejected: empty_input"
+    ]
+  },
+  {
+    "id": 6,
+    "prompt": "收敛一个 idea-pool，其中80%想法集中在同一维度，其他维度各1-2个",
+    "expected": "识别维度偏斜，在盲区中标注偏斜维度，仍可收敛但需标注覆盖不足",
+    "type": "edge_case",
+    "check_points": [
+      "识别维度偏斜（单维度>80%）",
+      "盲区报告标注覆盖不足的维度",
+      "收敛结论中标注'仅基于维度X的密集数据'",
+      "不忽略低覆盖维度的想法"
+    ]
+  }
+]

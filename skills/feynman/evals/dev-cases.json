@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "prompt": "审查这个 bayes report: docs/hegel-reports/wechat-ingest-bayes-2026-06-22.md（8条预测，5 verified 3 refuted）",
+    "expected": "六原则审查，合规率≥3/6，有问题列表和分级",
+    "type": "happy_path",
+    "check_points": [
+      "P1 假设必须有形式化验证",
+      "P2 不确定性标注检查",
+      "P3 步骤→预期→结果格式反例验证",
+      "P4 误差范围合理性检查",
+      "P5 自证清白检测（强制生成反面论证）",
+      "P6 代理目标检查（真相漂移）",
+      "产出合规率 x/6",
+      "问题分级 ❌阻塞 / ⚠️非阻塞",
+      "有修复建议"
+    ]
+  },
+  {
+    "id": 2,
+    "prompt": "审查一个全部通过的 bayes report（所有预测都 VERIFIED，无问题）",
+    "expected": "P5 自证清白应强制生成反面论证，不应简单放行",
+    "type": "edge_case",
+    "check_points": [
+      "P5 检测'全通过'偏差",
+      "强制生成至少1条反面论证",
+      "不简单放行（'全对'是自欺信号）",
+      "即使最终合规率高，也应有审查痕迹"
+    ]
+  },
+  {
+    "id": 3,
+    "prompt": "审查一个有严重问题的 bayes report（预测被推翻但未扩大误差范围）",
+    "expected": "发现问题并标记为❌阻塞级，建议修复后重跑",
+    "type": "edge_case",
+    "check_points": [
+      "检测到 REFUTED 预测但误差范围未扩大",
+      "标记为 ❌ 阻塞级问题",
+      "veto_count≥1",
+      "修复建议明确（'扩大误差范围后重跑'）",
+      "建议 pipeline 暂停进入下一转"
+    ]
+  },
+  {
+    "id": 4,
+    "prompt": "审查一个存在真相漂移的 report（目标被替换为代理指标）",
+    "expected": "P6 检测到 truth_drift，标记 highlight",
+    "type": "edge_case",
+    "check_points": [
+      "P6 识别代理目标替换",
+      "标注 truth_drift: detected",
+      "在产出中高亮漂移点",
+      "建议回溯到原始目标"
+    ]
+  },
+  {
+    "id": 5,
+    "prompt": "审查一个不存在的 report 文件路径",
+    "expected": "拒绝处理，提示文件不存在",
+    "type": "negative",
+    "check_points": [
+      "检测文件不存在",
+      "不生成假审查报告",
+      "提示用户检查路径",
+      "report 中标注 rejected: input_not_found"
+    ]
+  },
+  {
+    "id": 6,
+    "prompt": "审查一个结构复杂的 pipeline 产出（含5转完整产出，bayes有15条预测）",
+    "expected": "压力测试：能在合理时间内完成6原则审查，不遗漏",
+    "type": "edge_case",
+    "check_points": [
+      "6原则全部执行（不因输入大而跳过）",
+      "每原则至少检查1个具体点",
+      "合规率计算正确",
+      "产出不因输入大而过度膨胀",
+      "有问题列表和分级"
+    ]
+  }
+]

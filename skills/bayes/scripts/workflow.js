@@ -119,6 +119,7 @@ const DIRECTION_SCHEMA = {
       },
       required: ['entity_anchored', 'action_verb', 'authoritative_source'],
     },
+    degraded_mode: { type: 'string', enum: ['web_search_fallback', 'single_model_degraded'] },
   },
   required: ['direction', 'confidence', 'key_evidence', 'source_quality'],
 }
@@ -218,11 +219,12 @@ function computeSoftAgreement(agentA, agentB, pred) {
     dimension: pred.dimension,
     predicted_direction: pred.if_thesis_correct.direction,
     agent_a: { direction: aDir, evidence: agentA.key_evidence, source_quality_pass: aSQ },
-    agent_b: { direction: bDir, evidence: agentB.key_evidence, source_quality_pass: bSQ },
+    agent_b: { direction: bDir, evidence: agentB.key_evidence, source_quality_pass: bSQ, degraded_mode: agentB.degraded_mode || null },
     agreement,
     surprise,
     low_signal: !aSQ && !bSQ,
     confidence: 'soft',
+    b2_mode: agentB.degraded_mode ? 'degraded' : 'heterogeneous',
   }
 }
 
@@ -473,26 +475,30 @@ ${truncated}
 独立判断，不要预设结论。
 `, { label: `agentA:${pred.factor.slice(0, 20)}`, phase: 'SoftVerify', schema: DIRECTION_SCHEMA }),
 
-        // Agent B: Qwen 解读（通过 idealab_client.py + 文件传递）
+        // Agent B: Qwen 解读（通过 idealab_client.py + 文件传递），失败时降级为 WebSearch
         // W2 fix: 使用临时文件传递源文档，避免 shell 注入
         () => agent(`
-你的任务是调用 Qwen 模型对源文档做独立方向解读。
+你的任务是对源文档做独立方向解读。
 
 步骤：
-1. 先将以下 user prompt 内容写入临时文件 ${tmpFile}：
+1. 尝试调用 Qwen 模型（异构验证）：
+   - 将以下 user prompt 写入临时文件 ${tmpFile}：
+     因子：${pred.factor}
+     正面条件：${pred.if_thesis_correct.description}
+     反面条件：${pred.if_thesis_wrong.description}
+     源文档：${truncated}
+   - 通过 Bash 执行：python scripts/shared/idealab_client.py --system "你是投资方向判断助手。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
+   - 如果成功，解析返回的 JSON，填入 schema 返回
 
-因子：${pred.factor}
-正面条件：${pred.if_thesis_correct.description}
-反面条件：${pred.if_thesis_wrong.description}
-源文档：
-${truncated}
+2. 如果 Qwen 不可用或调用失败，降级为 WebSearch 独立验证：
+   - 使用 WebSearch 搜索 "${pred.factor} ${pred.dimension}" 获取独立信息
+   - 从搜索结果中提取与因子方向判断相关的关键信息
+   - 独立判断方向：positive / negative / neutral / ambiguous
+   - 评估源质量（entity_anchored / action_verb / authoritative_source）
+   - 在 key_evidence 前标注 [web_search_fallback]
+   - 设置 degraded_mode: "web_search_fallback"
 
-2. 然后通过 Bash 执行（在当前项目根目录下）：
-python scripts/shared/idealab_client.py --system "你是投资方向判断助手。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
-
-3. 解析 Qwen 返回的 JSON，填入 schema 返回。
-
-如果调用失败，返回 direction=ambiguous 并在 key_evidence 说明错误。
+3. 返回 schema 格式结果。
 `, { label: `agentB:${pred.factor.slice(0, 20)}`, phase: 'SoftVerify', schema: DIRECTION_SCHEMA }),
       ]).then(([agentA, agentB]) => computeSoftAgreement(agentA, agentB, pred))
     }
@@ -559,25 +565,27 @@ ${truncated}
 独立判断，不要预设结论。
 `, { label: `codeA:${pred.factor.slice(0, 20)}`, phase: 'SoftVerify', schema: DIRECTION_SCHEMA }),
 
-        // Agent B: Qwen 代码解读
+        // Agent B: Qwen 代码解读，失败时降级为单模型双视角
         () => agent(`
-你的任务是调用 Qwen 模型对代码片段做独立语义解读。
+你的任务是对代码片段做独立语义解读。
 
 步骤：
-1. 先将以下 user prompt 内容写入临时文件 ${tmpFile}：
+1. 尝试调用 Qwen 模型（异构验证）：
+   - 将以下 user prompt 写入临时文件 ${tmpFile}：
+     因子：${pred.factor}
+     正面条件：${pred.if_thesis_correct.description}
+     反面条件：${pred.if_thesis_wrong.description}
+     代码片段：${truncated}
+   - 通过 Bash 执行：python scripts/shared/idealab_client.py --system "你是代码语义分析助手。分析代码片段，判断其对给定因子的方向性。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要（引用具体代码）, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
+   - 如果成功，解析返回的 JSON，填入 schema 返回
 
-因子：${pred.factor}
-正面条件：${pred.if_thesis_correct.description}
-反面条件：${pred.if_thesis_wrong.description}
-代码片段：
-${truncated}
+2. 如果 Qwen 不可用或调用失败，降级为单模型双视角验证：
+   - 重新阅读代码片段，使用不同分析视角（关注异常处理、边界条件、副作用）
+   - 独立判断方向：positive / negative / neutral / ambiguous
+   - 在 key_evidence 前标注 [degraded_single_model]
+   - 设置 degraded_mode: "single_model_degraded"
 
-2. 然后通过 Bash 执行：
-python scripts/shared/idealab_client.py --system "你是代码语义分析助手。分析代码片段，判断其对给定因子的方向性。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要（引用具体代码）, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
-
-3. 解析 Qwen 返回的 JSON，填入 schema 返回。
-
-如果调用失败，返回 direction=ambiguous 并在 key_evidence 说明错误。
+3. 返回 schema 格式结果。
 `, { label: `codeB:${pred.factor.slice(0, 20)}`, phase: 'SoftVerify', schema: DIRECTION_SCHEMA }),
       ]).then(([agentA, agentB]) => computeSoftAgreement(agentA, agentB, pred))
     }

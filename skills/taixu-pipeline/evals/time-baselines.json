@@ -1,0 +1,82 @@
+{
+  "version": "1.1-calibrated",
+  "last_calibrated": "2026-06-30",
+  "calibration_method": "实测中位数（3次取中位）",
+  "script_baselines": {
+    "hegel": {
+      "init-state.py": {
+        "calibrated": true,
+        "median_ms": 90,
+        "samples_ms": [85, 90, 95],
+        "note": "空状态初始化，含 lens 校验"
+      },
+      "check-convergence.py": {
+        "calibrated": true,
+        "median_ms": 57,
+        "samples_ms": [55, 57, 60],
+        "note": "0 findings 空状态收敛判定"
+      },
+      "scope-validate.py": {
+        "calibrated": true,
+        "median_ms": 45,
+        "samples_ms": [40, 45, 50],
+        "note": "scope JSON schema 校验"
+      },
+      "test_hegel_scripts.py": {
+        "calibrated": true,
+        "median_ms": 4,
+        "samples_ms": [3, 4, 5],
+        "note": "22 个单元测试（不含 Python 启动 ~120ms）"
+      }
+    },
+    "taixu-pipeline": {
+      "trigger-blind-test": {
+        "calibrated": true,
+        "median_ms": 60,
+        "samples_ms": [55, 60, 65],
+        "note": "110 题 substring 匹配 + 结果输出"
+      }
+    }
+  },
+  "llm_baselines": {
+    "osborn": {
+      "calibrated": false,
+      "estimated_range_s": [15, 30],
+      "note": "LLM 调用时间取决于 API 延迟，标记为估计值"
+    },
+    "hegel": {
+      "calibrated": false,
+      "estimated_range_s": [20, 40],
+      "note": "单轮分析含 LLM 调用，取决于 finding 数量"
+    },
+    "bayes": {
+      "calibrated": false,
+      "estimated_range_s": [30, 60],
+      "note": "B1+B2 验证含外部 API 调用"
+    },
+    "feynman": {
+      "calibrated": false,
+      "estimated_range_s": [20, 40],
+      "note": "盲审子 agent 调用"
+    },
+    "debono": {
+      "calibrated": false,
+      "estimated_range_s": [15, 30],
+      "note": "价值回溯论证"
+    }
+  },
+  "version_history": [
+    {
+      "version": "1.0",
+      "date": "2026-06-30",
+      "change": "初始版本，全部为估计值",
+      "source": "历史存档 2 道完整案例"
+    },
+    {
+      "version": "1.1-calibrated",
+      "date": "2026-06-30",
+      "change": "脚本级典型值校准（4 项实测中位数），LLM 级仍为估计值",
+      "source": "Phase 2B 校准实测"
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "date": "2026-07-03",
+  "total_cases": 1,
+  "total_reviews": 2,
+  "win_rate": {
+    "A_wins": 0,
+    "B_wins": 0,
+    "ties": 1,
+    "A_win_rate_pct": 0.0,
+    "B_win_rate_pct": 0.0
+  },
+  "weighted_averages": {
+    "A_total": 72.2,
+    "B_total": 70.0,
+    "delta": 2.2
+  },
+  "dimension_summary": {
+    "D1": {
+      "name": "方法论覆盖深度",
+      "avg_median_A": 7.5,
+      "avg_median_B": 7.0,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D2": {
+      "name": "管线编排完整性",
+      "avg_median_A": 8.0,
+      "avg_median_B": 7.5,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D3": {
+      "name": "评估严谨度",
+      "avg_median_A": 8.0,
+      "avg_median_B": 7.5,
+      "avg_variance": 2,
+      "cases_needing_review": 0
+    },
+    "D4": {
+      "name": "问题路由准确率",
+      "avg_median_A": 5.5,
+      "avg_median_B": 5.5,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D5": {
+      "name": "上下文纪律",
+      "avg_median_A": 6.0,
+      "avg_median_B": 6.0,
+      "avg_variance": 0,
+      "cases_needing_review": 0
+    },
+    "D6": {
+      "name": "可移植性与入门体验",
+      "avg_median_A": 6.0,
+      "avg_median_B": 5.5,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D7": {
+      "name": "运营闭环",
+      "avg_median_A": 6.0,
+      "avg_median_B": 6.5,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D8": {
+      "name": "本地可靠性",
+      "avg_median_A": 7.0,
+      "avg_median_B": 6.5,
+      "avg_variance": 3,
+      "cases_needing_review": 1
+    },
+    "D9": {
+      "name": "发散质量",
+      "avg_median_A": 7.5,
+      "avg_median_B": 8.0,
+      "avg_variance": 2,
+      "cases_needing_review": 0
+    },
+    "D10": {
+      "name": "收敛稳定性",
+      "avg_median_A": 6.0,
+      "avg_median_B": 5.5,
+      "avg_variance": 2,
+      "cases_needing_review": 0
+    },
+    "D11": {
+      "name": "验证有效度",
+      "avg_median_A": 6.5,
+      "avg_median_B": 6.0,
+      "avg_variance": 3,
+      "cases_needing_review": 1
+    },
+    "D12": {
+      "name": "审查检出力",
+      "avg_median_A": 7.0,
+      "avg_median_B": 6.5,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    },
+    "D13": {
+      "name": "归真价值找回率",
+      "avg_median_A": 6.5,
+      "avg_median_B": 7.0,
+      "avg_variance": 1,
+      "cases_needing_review": 0
+    }
+  },
+  "cases_needing_human_review": 1,
+  "total_framework_gaps": 4,
+  "backlog_framework_gaps": {},
+  "cases": {
+    "TC-009_vs_TC-010": {
+      "case_id": "TC-009_vs_TC-010",
+      "num_reviewers": 2,
+      "reviewers": [
+        "claude",
+        "qwen"
+      ],
+      "dimensions": {
+        "D1": {
+          "name": "方法论覆盖深度",
+          "weight": 10,
+          "median_A": 7.5,
+          "median_B": 7.0,
+          "all_A": [
+            7,
+            8
+          ],
+          "all_B": [
+            7,
+            7
+          ],
+          "variance_A": 1,
+          "variance_B": 0,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D2": {
+          "name": "管线编排完整性",
+          "weight": 10,
+          "median_A": 8.0,
+          "median_B": 7.5,
+          "all_A": [
+            8,
+            8
+          ],
+          "all_B": [
+            8,
+            7
+          ],
+          "variance_A": 0,
+          "variance_B": 1,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D3": {
+          "name": "评估严谨度",
+          "weight": 10,
+          "median_A": 8.0,
+          "median_B": 7.5,
+          "all_A": [
+            7,
+            9
+          ],
+          "all_B": [
+            7,
+            8
+          ],
+          "variance_A": 2,
+          "variance_B": 1,
+          "max_variance": 2,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D4": {
+          "name": "问题路由准确率",
+          "weight": 5,
+          "median_A": 5.5,
+          "median_B": 5.5,
+          "all_A": [
+            6,
+            5
+          ],
+          "all_B": [
+            6,
+            5
+          ],
+          "variance_A": 1,
+          "variance_B": 1,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": 0.0
+        },
+        "D5": {
+          "name": "上下文纪律",
+          "weight": 5,
+          "median_A": 6.0,
+          "median_B": 6.0,
+          "all_A": [
+            6,
+            6
+          ],
+          "all_B": [
+            6,
+            6
+          ],
+          "variance_A": 0,
+          "variance_B": 0,
+          "max_variance": 0,
+          "needs_human_review": false,
+          "delta": 0.0
+        },
+        "D6": {
+          "name": "可移植性与入门体验",
+          "weight": 5,
+          "median_A": 6.0,
+          "median_B": 5.5,
+          "all_A": [
+            6,
+            6
+          ],
+          "all_B": [
+            6,
+            5
+          ],
+          "variance_A": 0,
+          "variance_B": 1,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D7": {
+          "name": "运营闭环",
+          "weight": 5,
+          "median_A": 6.0,
+          "median_B": 6.5,
+          "all_A": [
+            6,
+            6
+          ],
+          "all_B": [
+            6,
+            7
+          ],
+          "variance_A": 0,
+          "variance_B": 1,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": -0.5
+        },
+        "D8": {
+          "name": "本地可靠性",
+          "weight": 5,
+          "median_A": 7.0,
+          "median_B": 6.5,
+          "all_A": [
+            8,
+            6
+          ],
+          "all_B": [
+            8,
+            5
+          ],
+          "variance_A": 2,
+          "variance_B": 3,
+          "max_variance": 3,
+          "needs_human_review": true,
+          "delta": 0.5
+        },
+        "D9": {
+          "name": "发散质量",
+          "weight": 12,
+          "median_A": 7.5,
+          "median_B": 8.0,
+          "all_A": [
+            7,
+            8
+          ],
+          "all_B": [
+            7,
+            9
+          ],
+          "variance_A": 1,
+          "variance_B": 2,
+          "max_variance": 2,
+          "needs_human_review": false,
+          "delta": -0.5
+        },
+        "D10": {
+          "name": "收敛稳定性",
+          "weight": 12,
+          "median_A": 6.0,
+          "median_B": 5.5,
+          "all_A": [
+            5,
+            7
+          ],
+          "all_B": [
+            5,
+            6
+          ],
+          "variance_A": 2,
+          "variance_B": 1,
+          "max_variance": 2,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D11": {
+          "name": "验证有效度",
+          "weight": 10,
+          "median_A": 6.5,
+          "median_B": 6.0,
+          "all_A": [
+            5,
+            8
+          ],
+          "all_B": [
+            5,
+            7
+          ],
+          "variance_A": 3,
+          "variance_B": 2,
+          "max_variance": 3,
+          "needs_human_review": true,
+          "delta": 0.5
+        },
+        "D12": {
+          "name": "审查检出力",
+          "weight": 8,
+          "median_A": 7.0,
+          "median_B": 6.5,
+          "all_A": [
+            7,
+            7
+          ],
+          "all_B": [
+            7,
+            6
+          ],
+          "variance_A": 0,
+          "variance_B": 1,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": 0.5
+        },
+        "D13": {
+          "name": "归真价值找回率",
+          "weight": 8,
+          "median_A": 6.5,
+          "median_B": 7.0,
+          "all_A": [
+            7,
+            6
+          ],
+          "all_B": [
+            7,
+            7
+          ],
+          "variance_A": 1,
+          "variance_B": 0,
+          "max_variance": 1,
+          "needs_human_review": false,
+          "delta": -0.5
+        }
+      },
+      "winners": [
+        "tie",
+        "A"
+      ],
+      "framework_gaps": [],
+      "needs_human_review": [
+        "D8",
+        "D11"
+      ],
+      "aggregate_winner": "tie",
+      "winner_votes": {
+        "tie": 1,
+        "A": 1
+      },
+      "weighted_A": {
+        "system": 38.8,
+        "process": 33.5,
+        "total": 72.2
+      },
+      "weighted_B": {
+        "system": 37.0,
+        "process": 33.0,
+        "total": 70.0
+      },
+      "weighted_delta": 2.2,
+      "framework_gaps_raw": [
+        "osborn 想法数量门槛与时间预算不匹配",
+        "hegel 收敛判据缺乏形式化定义",
+        "debono 四维价值扫描未定义",
+        "mixed bayes 现状审计模式未覆盖"
+      ],
+      "framework_gaps_count": 4,
+      "framework_gaps_repeated": {}
+    }
+  }
+}

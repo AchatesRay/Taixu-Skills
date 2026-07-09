@@ -1,0 +1,367 @@
+{
+  "version": "1.0",
+  "date": "2026-06-30",
+  "description": "太虚五转回归语料库 Phase 1 — 20 题基线集",
+  "total_cases": 20,
+  "composition": {
+    "historical_full_pipeline": 8,
+    "new_full_pipeline": 3,
+    "single_skill": 7,
+    "boundary": 2
+  },
+  "cases": [
+    {
+      "id": "TC-001",
+      "category": "historical_full",
+      "source": "wechat-ingest-2026-06-22",
+      "problem_type": "non_deterministic",
+      "domain": "investment",
+      "input": "微信 ingest 系统的技术可行性与投资价值",
+      "source_files": {
+        "osborn": "docs/osborn-pools/wechat-ingest-2026-06-22.md",
+        "hegel": "docs/hegel-reports/wechat-ingest-hegel-2026-06-22.md",
+        "bayes": "docs/hegel-reports/wechat-ingest-bayes-2026-06-22.md",
+        "feynman": "docs/hegel-reports/wechat-ingest-feynman-2026-06-22.md",
+        "debono": "docs/hegel-reports/wechat-ingest-debono-2026-06-22.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 80, "scamper_coverage": "7/7", "min_perspectives": 4 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2 },
+        "bayes": { "min_predictions": 5, "verification_status": "mixed", "min_blindspots": 2 },
+        "feynman": { "min_compliance": "2/6", "veto_count_range": "0-2" },
+        "debono": { "strategy_coverage_min": 3, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 44,
+      "notes": "完整5转运行，基线校准 Case C4，得分 44.2"
+    },
+    {
+      "id": "TC-002",
+      "category": "historical_full",
+      "source": "bayes-feynman-lightweight-embedding-2026-06-22",
+      "problem_type": "mixed",
+      "domain": "technical",
+      "input": "bayes-feynman 轻量嵌入方案是否可行",
+      "source_files": {
+        "osborn": "docs/osborn-pools/bayes-feynman-lightweight-embedding-2026-06-22.md",
+        "hegel": "docs/hegel-reports/bayes-feynman-lightweight-embedding-hegel-2026-06-22.md",
+        "feynman": "docs/feynman-reports/bayes-feynman-lightweight-embedding-feynman-2026-06-22.md",
+        "debono": "docs/debono-reports/bayes-feynman-lightweight-embedding-debono-2026-06-22.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 60, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2 },
+        "bayes": { "min_predictions": 0, "verification_status": "skipped", "notes": "hegel standalone 模式跳过独立 bayes" },
+        "feynman": { "min_compliance": "4/6", "veto_count_range": "0-1" },
+        "debono": { "strategy_coverage_min": 3, "survival_arguments_min": 2 }
+      },
+      "time_baseline_min": 36,
+      "notes": "4转运行（hegel standalone 跳过 bayes），基线校准 Case C5，得分 45.5"
+    },
+    {
+      "id": "TC-003",
+      "category": "historical_full",
+      "source": "anthropic-financial-services-adoption-2026-06-24",
+      "problem_type": "non_deterministic",
+      "domain": "business",
+      "input": "金融机构采纳 Anthropic AI 的趋势分析",
+      "source_files": {
+        "osborn": "docs/osborn-pools/anthropic-financial-services-adoption-2026-06-24.md",
+        "hegel": "docs/hegel-reports/anthropic-financial-services-adoption-hegel-2026-06-24.md",
+        "summary": "docs/reports/anthropic-financial-services-adoption-taixu-summary.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 100, "scamper_coverage": "7/7", "min_perspectives": 4 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 1 },
+        "bayes": { "min_predictions": 0, "verification_status": "unknown", "notes": "hegel truncated，后续不完整" },
+        "feynman": { "min_compliance": "0/6", "veto_count_range": "0-2", "notes": "未运行或未存档" },
+        "debono": { "strategy_coverage_min": 0, "survival_arguments_min": 0, "notes": "未运行或未存档" }
+      },
+      "time_baseline_min": 30,
+      "notes": "不完整运行（hegel truncated），用作边界校准"
+    },
+    {
+      "id": "TC-004",
+      "category": "historical_full",
+      "source": "info-pipeline-optimization-2026-06-25",
+      "problem_type": "mixed",
+      "domain": "infrastructure",
+      "input": "信息源管线优化方向规划",
+      "source_files": {
+        "summary": "docs/reports/info-pipeline-optimization-taixu-summary-2026-06-25.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 80, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2 },
+        "bayes": { "min_predictions": 3, "verification_status": "mixed" },
+        "feynman": { "min_compliance": ">=3/6", "veto_count_range": "0-1" },
+        "debono": { "strategy_coverage_min": 2, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 44,
+      "notes": "完整5转运行，有综合总结"
+    },
+    {
+      "id": "TC-005",
+      "category": "historical_full",
+      "source": "brief-restructure-2026-06-29",
+      "problem_type": "mixed",
+      "domain": "structure",
+      "input": "Brief 整体结构重组方案",
+      "source_files": {
+        "summary": "docs/reports/brief-restructure-taixu-summary-2026-06-29.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 50, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 1 },
+        "bayes": { "min_predictions": 2, "verification_status": "mixed" },
+        "feynman": { "min_compliance": ">=3/6", "veto_count_range": "0-1" },
+        "debono": { "strategy_coverage_min": 2, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 44,
+      "notes": "完整5转运行，有综合总结"
+    },
+    {
+      "id": "TC-006",
+      "category": "historical_full",
+      "source": "problem-type-routing-2026-06-29",
+      "problem_type": "mixed",
+      "domain": "pipeline_design",
+      "input": "在 taixu-pipeline 入口增加问题类型路由",
+      "source_files": {
+        "osborn": ".agents/tmp/osborn-pool-problem-type-routing-2026-06-29.md",
+        "hegel": ".agents/tmp/hegel-convergence-problem-type-routing-2026-06-29.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 80, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 2, "min_blindspots": 1 },
+        "bayes": { "min_predictions": 0, "verification_status": "not_run" },
+        "feynman": { "min_compliance": "0/6", "veto_count_range": "0-0", "notes": "未运行" },
+        "debono": { "strategy_coverage_min": 0, "survival_arguments_min": 0, "notes": "未运行" }
+      },
+      "time_baseline_min": 16,
+      "notes": "2转运行（osborn + hegel），用于单转行为验证"
+    },
+    {
+      "id": "TC-007",
+      "category": "historical_full",
+      "source": "phase-monitor-2026-06-29",
+      "problem_type": "mixed",
+      "domain": "pipeline_design",
+      "input": "在 osborn 增加阶段监测器",
+      "source_files": {
+        "osborn": ".agents/tmp/osborn-pool-phase-monitor-2026-06-29.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 40, "scamper_coverage": ">=3/7", "min_perspectives": 2 },
+        "hegel": { "terminal_status": "not_run", "max_rounds": 0 },
+        "bayes": { "min_predictions": 0, "verification_status": "not_run" },
+        "feynman": { "min_compliance": "0/6", "veto_count_range": "0-0" },
+        "debono": { "strategy_coverage_min": 0, "survival_arguments_min": 0 }
+      },
+      "time_baseline_min": 8,
+      "notes": "仅 osborn 单转运行"
+    },
+    {
+      "id": "TC-008",
+      "category": "historical_full",
+      "source": "time-budget-2026-06-29",
+      "problem_type": "mixed",
+      "domain": "pipeline_design",
+      "input": "为太虚五转设计全局时间预算",
+      "source_files": {
+        "osborn": ".agents/tmp/osborn-pool-time-budget-2026-06-29.md"
+      },
+      "expected_outputs": {
+        "osborn": { "min_ideas": 40, "scamper_coverage": ">=3/7", "min_perspectives": 2 },
+        "hegel": { "terminal_status": "not_run", "max_rounds": 0 },
+        "bayes": { "min_predictions": 0, "verification_status": "not_run" },
+        "feynman": { "min_compliance": "0/6", "veto_count_range": "0-0" },
+        "debono": { "strategy_coverage_min": 0, "survival_arguments_min": 0 }
+      },
+      "time_baseline_min": 8,
+      "notes": "仅 osborn 单转运行"
+    },
+    {
+      "id": "TC-009",
+      "category": "new_full",
+      "source": "TBD — Phase 1 新跑",
+      "problem_type": "deterministic",
+      "domain": "code",
+      "input": "这段解析器代码是否有 bug：检查 futu-statement-parser 的负持仓处理逻辑",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 15, "scamper_coverage": ">=3/7", "min_perspectives": 2 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 2, "min_blindspots": 1 },
+        "bayes": { "min_predictions": 3, "verification_status": "verified_or_refuted" },
+        "feynman": { "min_compliance": ">=3/6", "veto_count_range": "0-1" },
+        "debono": { "strategy_coverage_min": 2, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 34,
+      "notes": "deterministic 题型，历史存档缺失。Phase 1 Task 3 产出"
+    },
+    {
+      "id": "TC-010",
+      "category": "new_full",
+      "source": "TBD — Phase 1 新跑",
+      "problem_type": "non_deterministic",
+      "domain": "investment",
+      "input": "当前市场环境下该不该加仓某标的",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 50, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2 },
+        "bayes": { "min_predictions": 5, "verification_status": "mixed" },
+        "feynman": { "min_compliance": ">=3/6", "veto_count_range": "0-2" },
+        "debono": { "strategy_coverage_min": 3, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 54,
+      "notes": "non_deterministic 投资决策类，与历史案例可比。Phase 1 Task 3 产出"
+    },
+    {
+      "id": "TC-011",
+      "category": "new_full",
+      "source": "TBD — Phase 1 新跑",
+      "problem_type": "mixed",
+      "domain": "architecture",
+      "input": "将 hegel SKILL.md 拆分为 SKILL.md + references/ 的方案是否可行",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 30, "scamper_coverage": ">=5/7", "min_perspectives": 3 },
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2 },
+        "bayes": { "min_predictions": 3, "verification_status": "mixed" },
+        "feynman": { "min_compliance": ">=3/6", "veto_count_range": "0-1" },
+        "debono": { "strategy_coverage_min": 2, "survival_arguments_min": 1 }
+      },
+      "time_baseline_min": 44,
+      "notes": "mixed 架构决策类。Phase 1 Task 3 产出"
+    },
+    {
+      "id": "TC-012",
+      "category": "single_skill",
+      "skill": "osborn",
+      "problem_type": "non_deterministic",
+      "domain": "creative",
+      "input": "如何让太虚五转方法论被更多团队采纳",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 30, "scamper_coverage": "7/7", "min_perspectives": 4 }
+      },
+      "time_baseline_min": 10,
+      "notes": "osborn 单转——创意类主题"
+    },
+    {
+      "id": "TC-013",
+      "category": "single_skill",
+      "skill": "osborn",
+      "problem_type": "deterministic",
+      "domain": "technical",
+      "input": "如何优化 statement parser 的错误处理",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 15, "scamper_coverage": ">=5/7", "min_perspectives": 3 }
+      },
+      "time_baseline_min": 8,
+      "notes": "osborn 单转——技术类主题"
+    },
+    {
+      "id": "TC-014",
+      "category": "single_skill",
+      "skill": "osborn",
+      "problem_type": "pending",
+      "domain": "general",
+      "input": "未来",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 5, "scamper_coverage": ">=2/7", "min_perspectives": 1, "notes": "模糊主题，想法量预期低" }
+      },
+      "time_baseline_min": 6,
+      "notes": "osborn 单转——模糊主题边界用例（与 TC-019 区别：这里至少有输入）"
+    },
+    {
+      "id": "TC-015",
+      "category": "single_skill",
+      "skill": "hegel",
+      "problem_type": "mixed",
+      "domain": "pipeline_design",
+      "input": "idea_pool: .agents/tmp/osborn-pool-problem-type-routing-2026-06-29.md",
+      "expected_outputs": {
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2, "min_compression_rate": 0.7 }
+      },
+      "time_baseline_min": 8,
+      "notes": "hegel 单转——用已有 idea-pool 做收敛"
+    },
+    {
+      "id": "TC-016",
+      "category": "single_skill",
+      "skill": "hegel",
+      "problem_type": "non_deterministic",
+      "domain": "investment",
+      "input": "idea_pool: docs/osborn-pools/wechat-ingest-2026-06-22.md",
+      "expected_outputs": {
+        "hegel": { "terminal_status": "converged", "max_rounds": 3, "min_blindspots": 2, "min_compression_rate": 0.7 }
+      },
+      "time_baseline_min": 10,
+      "notes": "hegel 单转——用已有 idea-pool 做收敛"
+    },
+    {
+      "id": "TC-017",
+      "category": "single_skill",
+      "skill": "bayes",
+      "problem_type": "deterministic",
+      "domain": "code",
+      "input": "claim: 'futu-statement-parser 正确处理了合股拆股后的持仓数量'",
+      "expected_outputs": {
+        "bayes": { "min_predictions": 3, "verification_status": "verified_or_refuted", "min_blindspots": 1 }
+      },
+      "time_baseline_min": 10,
+      "notes": "bayes 单转——代码类事实验证"
+    },
+    {
+      "id": "TC-018",
+      "category": "single_skill",
+      "skill": "bayes",
+      "problem_type": "non_deterministic",
+      "domain": "investment",
+      "input": "claim: '当前应该加仓科技股'",
+      "expected_outputs": {
+        "bayes": { "min_predictions": 5, "verification_status": "mixed", "min_blindspots": 2 }
+      },
+      "time_baseline_min": 12,
+      "notes": "bayes 单转——投资类概率验证"
+    },
+    {
+      "id": "TC-019",
+      "category": "boundary",
+      "skill": "full_pipeline",
+      "problem_type": "pending",
+      "domain": "unknown",
+      "input": "",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 0, "notes": "空输入，应拒绝并提示输入主题" },
+        "hegel": { "terminal_status": "rejected", "notes": "上游无产出" },
+        "bayes": { "verification_status": "not_run" },
+        "feynman": { "min_compliance": "0/6", "notes": "不运行" },
+        "debono": { "strategy_coverage_min": 0, "notes": "不运行" }
+      },
+      "time_baseline_min": 2,
+      "notes": "边界用例——空输入，验证 pipeline 的输入校验"
+    },
+    {
+      "id": "TC-020",
+      "category": "boundary",
+      "skill": "full_pipeline",
+      "problem_type": "pending",
+      "domain": "unknown",
+      "input": "东西",
+      "expected_outputs": {
+        "osborn": { "min_ideas": 5, "scamper_coverage": ">=1/7", "min_perspectives": 1, "notes": "极模糊主题，想法量极低" },
+        "hegel": { "terminal_status": "diverged_or_truncated", "notes": "输入不足以收敛" },
+        "bayes": { "verification_status": "not_applicable", "notes": "上游未收敛" },
+        "feynman": { "min_compliance": "0/6", "notes": "不运行或无产出" },
+        "debono": { "strategy_coverage_min": 0, "notes": "不运行" }
+      },
+      "time_baseline_min": 10,
+      "notes": "边界用例——极模糊主题，验证 pipeline 的降级处理"
+    }
+  ],
+  "usage_notes": {
+    "automation": "每个 case 的 expected_outputs 可被自动化检查脚本消费。脚本读取产出物 YAML frontmatter，提取字段值与 expected_outputs 对比。",
+    "phase1_baseline": "TC-001 到 TC-008（历史存档）+ TC-009 到 TC-011（新跑）= 11 道完整管线题，用于 1.0 vs 2.0 blind A/B。",
+    "single_skill_regression": "TC-012 到 TC-018 用于验证各 skill 独立行为不退化。",
+    "boundary_tests": "TC-019 到 TC-020 用于验证边界条件处理不退化。",
+    "calibration": "time_baseline_min 为估计值，≥10 次同类型运行后用实际中位数替换。"
+  }
+}

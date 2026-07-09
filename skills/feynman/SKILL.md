@@ -4,9 +4,9 @@ display_name: "太虚四转 · 破妄（费曼）"
 description: >
   Output audit (太虚四转·破妄): six self-deception principles via blind sub-agent. Use when user says
   "审查", "费曼", "feynman", "提交前把关".
-version: "2.4.1"
+version: "2.5.0"
 visibility: public
-last_updated: "2026-06-12"
+last_updated: "2026-06-30"
 triggers:
   - feynman
   - 太虚四转
@@ -104,6 +104,7 @@ Phase 1（收集变更）在主 Agent 完成，Phase 2 + Phase 3（审查 + 报�
 3. principles       — CLAUDE.md 中六原则的完整内容（运行时读取）
 4. checklist        — references/checklist.md 的完整内容
 5. report_template  — Phase 3 的报告格式模板
+6. problem_type     — 问题类型（可选，来自 pipeline osborn P0 判定，调整审查侧重）
 ```
 
 **禁止传递的数据**（泄露会破坏独立性）：
@@ -114,38 +115,7 @@ Phase 1（收集变更）在主 Agent 完成，Phase 2 + Phase 3（审查 + 报�
 
 ### subAgent prompt 模板
 
-```
-你是一个代码变更认知审查员（Feynman Reviewer）。你的任务是审查以下代码变更
-是否存在六种自欺：假设未验证、推理框架错配、过度设计、附带伤害、自证清白、真相漂移。
-
-你不知道这些变更的背景、动机或用户需求——这是刻意的。
-你只能从变更本身判断它是否符合工程认知纪律。
-
-## 六条原则
-
-{principles_content}
-
-## 审查 Checklist
-
-{checklist_content}
-
-## 文件类型路由矩阵
-
-{routing_matrix}
-
-## 待审查的变更
-
-### 变更文件清单
-{changed_files_summary}
-
-### Diff 内容
-{diff_content}
-
-## 输出要求
-
-按 Phase 2（逐原则审查）和 Phase 3（输出报告）格式，生成完整审查报告。
-每个判定必须引用 `file_path:line_number` + 代码片段作为证据。没有证据的判定无效。
-```
+主 Agent 向 subAgent 传递数据包（diff_content / changed_files / principles / checklist / report_template / problem_type），禁止传递对话历史。详见 [references/subagent-protocol.md](references/subagent-protocol.md)（含 prompt 模板 + 降级条件 + 深挖 prompt）。
 
 ### 降级条件
 
@@ -168,6 +138,16 @@ Phase 1（收集变更）在主 Agent 完成，Phase 2 + Phase 3（审查 + 报�
 - 指定 MR/PR：`/feynman !1234`
 - 存量审查：`/feynman --scope module path/to/dir`
 - 依赖链审查：`/feynman --scope deps`
+- `--problem-type`（可选，pipeline 传入）：调整审查侧重，不改变六原则覆盖
+
+### problem_type 适配
+
+| problem_type | 加严原则 | 审查侧重调整 |
+|--------------|---------|-------------|
+| deterministic | P1 Think Before Coding | 假设必须有形式化验证或可复现的实验证据，"我觉得对"不算数 |
+| non_deterministic | P2 Uncertainty Honesty | 所有定量结论必须标注置信区间或概率分布，禁止伪装为确定性 |
+| mixed | P1 + P2 平衡 | deterministic 子问题按 P1 加严，non_deterministic 子问题按 P2 加权 |
+| pending | 无调整 | 六原则均等审查（当前行为） |
 
 ### --scope 模式说明
 
@@ -282,31 +262,7 @@ find <path> -name "*.py" -o -name "*.js" -o -name "*.ts" | head -50
 
 **Bayes 定位：** Bayes 是「结论深挖验证器」——Feynman 发现可疑点后委派 Bayes 做定向调查，类似审计师委托调查员取证。Bayes 也可独立于 Feynman 使用（用户直接验证某个判断的可靠性）。
 
-**subAgent 深挖 prompt 模板：**
-
-```
-你是 Feynman 审查的调查员。你的任务是验证以下命题的真假：
-
-命题：{proposition}
-当前置信度：{confidence}（基于初步代码阅读）
-不确定来源：{uncertainty_source}
-
-相关上下文：
-{code_context}
-
-请通过以下手段验证（按需选用）：
-- 追溯调用链（grep 函数名，读上下游）
-- 检查测试覆盖（是否有测试验证了这个行为）
-- 查 git history（这段代码的变更意图）
-- 读配置/文档（是否有声明式约束）
-
-输出：
-1. 验证结论（成立/不成立/无法确定）
-2. 关键证据（file:line + 片段）
-3. 更新后置信度
-```
-
-**禁止**：在证据不足时直接凭"感觉"给 ❌。宁可多花 30 秒深挖，也不用猜测替代验证。
+subAgent 深挖 prompt 模板详见 [references/subagent-protocol.md](references/subagent-protocol.md)。禁止在证据不足时凭"感觉"给 ❌。
 
 #### module/deps 模式的审查聚焦
 
@@ -326,69 +282,7 @@ find <path> -name "*.py" -o -name "*.js" -o -name "*.ts" | head -50
 
 ### Phase 3: 输出报告
 
-#### 格式
-
-```markdown
----
-signals:
-  veto_count: 0
----
-
-## Feynman 认知纪律审查报告
-
-**审查模式**：{diff | module | deps}
-**变更范围**：{diff: N 个文件，+X/-Y | module: 目录 path，N 个文件，共 M 行 | deps: N 个变更函数，M 个依赖}
-**审查日期**：{date}
-
-### 逐项判定
-
-| 原则 | 自欺类型 | 判定 | 说明 |
-|------|---------|------|------|
-| P1 Think Before Coding | 假设未验证 | ✅/⚠️/❌ | {一句话} |
-| P2 Uncertainty Honesty | 伪装确定性 | ✅/⚠️/❌ | {一句话} |
-| P3 Simplicity First | 过度设计 | ✅/⚠️/❌ | {一句话} |
-| P4 Surgical Changes | 附带伤害 | ✅/⚠️/❌ | {一句话} |
-| P5 Goal-Driven | 自证清白 | ✅/⚠️/❌ | {一句话} |
-| P6 SSOT-First | 真相漂移 | ✅/⚠️/❌ | {一句话} |
-
-**合规率**：{N}/6
-
-### 问题清单
-
-{仅在有 ⚠️ 或 ❌ 时输出}
-
-#### P{n}-{序号}: {问题标题}
-
-- **文件**：`{path}:{line}`
-- **现状**：{引用 diff 中的具体代码}
-- **自欺**：{你在骗自己什么}
-- **影响**：{会导致什么后果}
-- **建议**：{具体修复方案}
-- **反例验证**：{仅判断否决时必填，技术否决省略此字段}
-  - 步骤：`{30 秒内可执行的命令或检查动作}`
-  - 预期：若 {X} 则原方案成立；若 {Y} 则此判定成立
-  - 结果：{已执行 → 附结论 | 待执行 → 标注 [待验证]}
-- **深挖记录**：{仅经过 Bayes 深挖的判定项需要此字段}
-  - 命题：{待验证的具体命题}
-  - 验证路径：{调用链追溯/测试覆盖/git history/...}
-  - 结论：{成立/不成立/无法确定} — 置信度 {before}→{after}
-
-### 总结
-
-{1-2 句话概括审查结论}
-
----
-### 🔗 下一步：进入执行
-
-审查已完成。若结论包含可执行的行动项，建议调用 `ce-plan` 生成实施计划，再进入 `ce-work` 编码。
-是否继续？（回复"继续"自动进入 ce-plan，回复"停"终止）
-```
-
-#### 判定阈值
-
-- 6/6 ✅：通过，无需改动
-- 有 ⚠️ 无 ❌：通过，建议改进（列出建议但不阻断）
-- 有 ❌：不通过，必须修复后重新审查
+报告含 YAML frontmatter（veto_count）+ 逐项判定表（6原则 × ✅/⚠️/❌）+ 合规率 + 问题清单（file:line + 自欺 + 影响 + 建议 + 反例验证 + 深挖记录）+ 总结 + 下一步引导。判定阈值：6/6 通过，有⚠️无❌通过带建议，有❌不通过。详见 [references/report-format.md](references/report-format.md)（含报告模板 + 判定阈值 + BACKLOG 沉淀协议）。
 
 ## 不做的事
 
@@ -402,26 +296,6 @@ signals:
 
 ---
 
-## 沉淀协议：写入 BACKLOG（v2）
+## 沉淀协议：写入 BACKLOG
 
-审查完成后，若有 ⚠️ 或 ❌ 级发现，用 CLI flag 模式调用 `sink-to-backlog.py`。
-
-> **v2 变更**：不再要求 AI 构造 JSON。改为 CLI flag 直接传参，AI 出错率更低。
-> 若希望人工确认后再写入，加 `--queue` 暂存，稍后 `--flush` 批量提交。
-
-### 调用方式（每条 finding 一次调用）
-
-```bash
-python3 scripts/sink-to-backlog.py \
-  --source feynman \
-  --severity ERROR \
-  --summary "违反 P1：假设未验证就当事实用" \
-  --detail "具体位置和表现" \
-  --fix-hint "修复建议" \
-  --context "审查对象简述"
-```
-
-### 严重度映射
-- ❌（不通过）→ `--severity ERROR`
-- ⚠️（警告）→ `--severity WARNING`
-- ✅（通过）→ 不沉淀，跳过
+审查完成后有 ⚠️ 或 ❌ 级发现时，用 CLI flag 模式调用 `sink-to-backlog.py`（❌→ERROR, ⚠️→WARNING, ✅→跳过）。详见 [references/report-format.md](references/report-format.md)。

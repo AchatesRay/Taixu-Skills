@@ -10,13 +10,10 @@
 | feynman | ⚫ 黑帽 | **审查**——查产出有没有自欺 |
 | debono | 🟡 黄帽 | **回溯**——找回被误杀的价值 |
 
-## 与 ce-brainstorm 的区别
+## 原 ce-brainstorm 能力去向
 
-| 维度 | ce-brainstorm | osborn |
-|------|--------------|--------|
-| 定位 | 需求澄清工具 | 思维发散工具 |
-| 输入 | 模糊需求 | 明确主题 |
-| 产出 | requirements doc（结构化需求） | idea-pool.md（结构化想法池） |
-| 过程 | Q&A 收敛澄清 | 量级驱动+视角轮换扩散 |
+ce-brainstorm 的能力已拆分吸收：
+- **需求澄清 / P0 发散** → 并入 **osborn P0-clarify**（太虚一发·澄清）
+- **规格化输出** → 并入 **hegel `--spec-only`**（太虚二转·规格桥接）
 
-两者**完全解耦**。需求不清先用 ce-brainstorm，主题已定要扩空间用 osborn。
+不再需要独立调用 ce-brainstorm。需求不清先用 osborn 澄清，再走 hegel 收敛出 spec。

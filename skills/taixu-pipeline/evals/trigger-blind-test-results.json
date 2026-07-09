@@ -1,0 +1,48 @@
+{
+  "date": "2026-06-30",
+  "total_cases": 110,
+  "pass": 108,
+  "fail": 2,
+  "accuracy": "98.2%",
+  "overall_precision": "96.2%",
+  "overall_recall": "100.0%",
+  "overall_f1": "98.0%",
+  "d5_target": "PASS",
+  "per_skill": {
+    "osborn": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "tn": 10
+    },
+    "hegel": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "tn": 10
+    },
+    "bayes": {
+      "tp": 10,
+      "fp": 1,
+      "fn": 0,
+      "tn": 10
+    },
+    "feynman": {
+      "tp": 10,
+      "fp": 1,
+      "fn": 0,
+      "tn": 9
+    },
+    "debono": {
+      "tp": 10,
+      "fp": 0,
+      "fn": 0,
+      "tn": 10
+    }
+  },
+  "issues": [
+    "⚠ TT-016: hegel matched but also {'feynman'} — query: '全面审查一下这个架构'",
+    "✗ TN-040: expected no match but got {'bayes'} — query: '验证完整性'",
+    "✗ CT-007: expected {'hegel', 'bayes'} but got {'bayes'} — query: '盘一下盘一盘'"
+  ]
+}

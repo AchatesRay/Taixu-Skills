@@ -1,0 +1,48 @@
+{
+  "reviewer_id": "qwen",
+  "case_id": "TC-009_vs_TC-010",
+  "scores_A": {
+    "D1": 8,
+    "D2": 8,
+    "D3": 9,
+    "D4": 5,
+    "D5": 6,
+    "D6": 6,
+    "D7": 6,
+    "D8": 6,
+    "D9": 8,
+    "D10": 7,
+    "D11": 8,
+    "D12": 7,
+    "D13": 6
+  },
+  "scores_B": {
+    "D1": 7,
+    "D2": 7,
+    "D3": 8,
+    "D4": 5,
+    "D5": 6,
+    "D6": 5,
+    "D7": 7,
+    "D8": 5,
+    "D9": 9,
+    "D10": 6,
+    "D11": 7,
+    "D12": 6,
+    "D13": 7
+  },
+  "weighted_A": {
+    "system": 39.5,
+    "process": 36.4,
+    "total": 75.9
+  },
+  "weighted_B": {
+    "system": 36.0,
+    "process": 35.4,
+    "total": 71.4
+  },
+  "winner": "A",
+  "dimension_notes": {},
+  "framework_gaps": [],
+  "_note": "Qwen 仅返回维度分数，未提供维度评语和框架缺口"
+}

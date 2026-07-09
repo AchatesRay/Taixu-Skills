@@ -4,9 +4,9 @@ display_name: "太虚三转 · 叩实（贝叶斯）"
 description: >
   Fact verification (太虚三转·叩实): decompose conclusion → testable predictions → external data
   validation. Use when user says "验证", "贝叶斯", "bayes", "靠谱吗".
-version: "4.2.0"
+version: "4.4.0"
 visibility: public
-last_updated: "2026-06-12"
+last_updated: "2026-06-30"
 kind: composed
 metadata:
   author: "Antifragile Research Team"
@@ -109,6 +109,8 @@ composition:
 ```yaml
 claim: string          # 必填。你的结论或判断（一句话）
 thesis_path: string    # 可选。相关分析文档的路径
+problem_type: string   # 可选。pipeline 传入（deterministic / non_deterministic / mixed / pending）
+verify_mode: string    # 可选。验证模式（single / dual / triple），默认 dual
 ```
 
 **输出**：验证报告（预测清单 + 数据验证结果 + 盲区清单），保存到对应目录下。
@@ -120,7 +122,7 @@ thesis_path: string    # 可选。相关分析文档的路径
 | 命题属于 no_reference_class | 没有可类比的历史案例，提前终止，返回 NOT_APPLICABLE |
 | thesis_path 不存在 | 直接基于你输入的结论文本继续 |
 | B1 API 不可用 | 标记该条数据查不到，不算已验证 |
-| B2 Idealab API 不可用 | 降级为同模型双视角验证，标注降级 |
+| B2 Idealab API 不可用 | 降级为 WebSearch 独立验证（Agent B 独立搜索+解读），标注 `degraded_mode`。详见 [b2-web-search-fallback.md](references/b2-web-search-fallback.md) |
 | B2 源搜索失败 | 标注"原始资料获取失败"，该条计入未覆盖 |
 | D2 区分力不足 | 预测太模糊无法验证，自动跳过 |
 | D7 未覆盖率 >50% | 输出警告：大部分预测没验到，不能说"没问题" |
@@ -170,11 +172,19 @@ Phase 1                    B1                    B2                    汇总
 
 ### 双模型交叉验证（B2）
 
-| 级别 | 配置 | 说明 |
-|------|------|------|
-| L1（降级） | 仅 Claude | 用两套不同提示词，同一模型两个视角 |
-| **L2（当前）** | Claude + Qwen | 两个不同模型各自独立解读 |
-| L3（扩展） | +Gemini | 三模型多数投票 |
+**`--verify-mode` 参数**（UltraPlan）：显式控制 B2 验证模式，支持 pipeline `--parallel` 并行 fan-out。
+
+| 级别 | 参数值 | 配置 | 说明 |
+|------|--------|------|------|
+| L1（降级） | `single` | 仅 Claude | 同模型双提示词，两个视角 |
+| **L1.5（WebSearch 降级）** | — | Claude + WebSearch | Agent B 独立搜索+解读，不同数据源提供独立性。Qwen 不可用时自动触发。详见 [b2-web-search-fallback.md](references/b2-web-search-fallback.md) |
+| **L2（默认）** | `dual` | Claude + Qwen | 两个不同模型各自独立解读 |
+| L3（扩展） | `triple` | +Gemini | 三模型多数投票，分歧时 Gemini 裁决 |
+
+**UltraPlan 并行模式**：当 pipeline 启用 `--parallel` 时，L2 的 Claude 和 Qwen 并行执行（而非顺序），L3 时三模型同时执行。验证结果合并规则：
+- 一致 → VERIFIED
+- 不一致 → DISPUTED（标记分歧，触发下一级裁决）
+- L3 分歧 → 多数投票，少数方记录
 
 ---
 
@@ -218,6 +228,15 @@ Phase 1                    B1                    B2                    汇总
 | 本质随机 | 不可约性 | 真的没法再查了，还是懒得查？ |
 | 本质随机 | 尾部风险 | 极端情况被低估了吗？ |
 
+### problem_type 适配（pipeline 传入）
+
+| problem_type | Phase 1 预测拆解 | B1 验证标准 | 深挖角度偏好 |
+|--------------|-----------------|------------|-------------|
+| deterministic | 拆为二元判定预测（成立/不成立） | 要求确定性证据（代码执行、形式化证明） | 确定性类：因果链验证、奥卡姆检验 |
+| non_deterministic | 拆为概率区间预测 | 接受概率性证据，关注置信区间 | 本质随机类：遍历性检验、尾部风险 |
+| mixed | 按子问题分别拆解 | 分区域验证 | 混合使用两类深挖角度 |
+| pending | 当前行为 | 当前行为 | 按现有不确定性类型自动判定 |
+
 ---
 
 ## 理论基石
@@ -253,7 +272,7 @@ Phase 1                    B1                    B2                    汇总
 
 ## 规格化桥接提示
 
-> 💡 **规格化桥接提示**：验证通过的预测（prediction + verified=true）可被提取为 Success Criteria（如 "SC1. 当 X 条件成立时，Y 指标应在 Z 范围内"），用于后续 ce-plan/ce-brainstorm 规格化输入。
+> 💡 **规格化桥接提示**：验证通过的预测（prediction + verified=true）可被提取为 Success Criteria（如 "SC1. 当 X 条件成立时，Y 指标应在 Z 范围内"），用于后续 liam-plan/hegel 规格化输入。
 
 ---
 
