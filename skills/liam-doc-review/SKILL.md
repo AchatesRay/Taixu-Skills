@@ -127,24 +127,24 @@ Tell the user which personas will review and why. For conditional personas, incl
 
 ```
 Reviewing with:
-- ce-coherence-reviewer (always-on)
-- ce-feasibility-reviewer (always-on)
-- ce-scope-guardian-reviewer -- plan has 12 requirements across 3 priority levels
-- ce-security-lens-reviewer -- plan adds API endpoints with auth flow
+- liam-coherence-reviewer (always-on)
+- liam-feasibility-reviewer (always-on)
+- liam-scope-guardian-reviewer -- plan has 12 requirements across 3 priority levels
+- liam-security-lens-reviewer -- plan adds API endpoints with auth flow
 ```
 
 ### Build Agent List
 
 Always include:
-- `ce-coherence-reviewer`
-- `ce-feasibility-reviewer`
+- `liam-coherence-reviewer`
+- `liam-feasibility-reviewer`
 
 Add activated conditional personas:
-- `ce-product-lens-reviewer`
-- `ce-design-lens-reviewer`
-- `ce-security-lens-reviewer`
-- `ce-scope-guardian-reviewer`
-- `ce-adversarial-document-reviewer`
+- `liam-product-lens-reviewer`
+- `liam-design-lens-reviewer`
+- `liam-security-lens-reviewer`
+- `liam-scope-guardian-reviewer`
+- `liam-adversarial-document-reviewer`
 
 ### Dispatch
 

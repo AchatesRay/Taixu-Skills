@@ -26,7 +26,7 @@ New specification-bridge outputs live under `docs/plans/` and use the unified pl
 artifact contract:
 
 - **Path:** `docs/plans/YYYY-MM-DD-NNN-<type>-<topic>-plan.<md|html>`.
-- **`artifact_contract: ce-unified-plan/v1`**.
+- **`artifact_contract: ~~ce-unified-plan/v1~~ (deprecated)`**.
 - **`artifact_readiness: requirements-only`**.
 - **`product_contract_source: hegel`**.
 - **`execution`** only when the brainstorm has enough signal to classify the
@@ -288,7 +288,7 @@ artifact.
   `surface-scope-earlier`, `demo-reel-local-save`). Used in the filename and
   as the resume-detection key when hegel scans for an existing
   artifact to continue.
-- **`artifact_contract`** — always `ce-unified-plan/v1` for new outputs.
+- **`artifact_contract`** — always ~~`ce-unified-plan/v1`~~ (deprecated — artifact contract removed) for new outputs.
 - **`artifact_readiness`** — always `requirements-only` for new
   specification-bridge outputs. Do not use `active`, `in_progress`, `completed`,
   or `done`.
