@@ -221,7 +221,7 @@ worse than omitting it.
 - **Success Criteria** — include when there are quality / metric / handoff
   signals that Requirements don't already carry: quantitative metrics ("p95
   latency under 200ms"), qualitative criteria ("the agent's output reads as
-  one voice"), process / handoff quality ("ce-doc-review can act on this
+  one voice"), process / handoff quality ("liam-doc-review can act on this
   without follow-ups"). Skip when Requirements ARE the success criteria
   (every R is "done when the R is true").
 

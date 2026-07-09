@@ -153,7 +153,7 @@ compatible_with: "hegel-v2-design 2026-06-09"
 | D1 拆分测试 | "这条 requirement 能否拆分为更小的独立单元？" | evaluative, prescriptive | hegel 内部 |
 | D2 依赖追溯 | 追踪 requirement 的前置条件和下游消费者 | causal | hegel 内部 |
 | D3 边界探测 | 找边界情况：需求变更、资源缩减、时间压缩时 requirement 是否仍有效 | factual（边界型） | hegel 内部 |
-| D4 复现验证 | 用独立视角重新评估同一 finding 的规格化价值 | factual（核心型） | ce-doc-review |
+| D4 复现验证 | 用独立视角重新评估同一 finding 的规格化价值 | factual（核心型） | liam-doc-review |
 
 ---
 

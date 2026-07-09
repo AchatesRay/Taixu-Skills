@@ -245,7 +245,7 @@ Fall back to a numbered list in chat only when no blocking tool exists or the ca
 If the user response indicates they're in the wrong skill or want a different workflow (e.g., "this is too small, just /liam-work it" or "this needs more thought, let me brainstorm differently"):
 
 - Stop hegel (or current skill)
-- Suggest the alternative skill the user appears to want (e.g., `/liam-work`, `/ce-debug`)
+- Suggest the alternative skill the user appears to want (e.g., `/liam-work`, `/systematic-debugging`)
 - Offer to load it in-session
 - Do not push back or argue — the user's redirect signal is the deliberate choice
 
