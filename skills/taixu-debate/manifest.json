@@ -1,0 +1,101 @@
+{
+  "name": "taixu-debate",
+  "version": "0.6.2",
+  "kind": "composed",
+  "description": "五角色三轮混合盲辩压测——奥斯本/黑格尔/贝叶斯/费曼/德博诺五位大师人格（发散/收敛/验证/审查/归真）对高 stakes 命题对撞辩论（投资决策/战略选择/认知求真），报告含辩论精华 + 三区（共识/分歧/未决）+ 综合判断 + 按命题类型分流的结论产出",
+  "entry": "SKILL.md",
+  "execution": "scripts/workflow.js",
+  "files": [
+    "SKILL.md",
+    "manifest.json",
+    "scripts/workflow.js",
+    "references/role-registry.md",
+    "references/debate-protocol.md",
+    "references/validation-experiment.md",
+    "references/roles/divergent.md",
+    "references/roles/convergent.md",
+    "references/roles/verifier.md",
+    "references/roles/auditor.md",
+    "references/roles/integrator.md",
+    "references/roles/host.md",
+    "templates/report-template.md"
+  ],
+  "input": {
+    "proposition": {
+      "type": "string",
+      "required": true,
+      "description": "高 stakes 命题，属三类之一：投资决策型（有具体标的与仓位动作）/选择决策型（技术选型/战略路径/方案取舍）/认知求真型（理解现象、检验叙事），须可证伪"
+    },
+    "proposition_type": {
+      "type": "string",
+      "required": false,
+      "enum": ["investment_decision", "choice_decision", "truth_seeking"],
+      "description": "命题类型。缺省时由西塞罗按场景限定（R6）判据推断，并记入报告 frontmatter"
+    },
+    "thesis_path": {
+      "type": "string",
+      "required": false,
+      "description": "标的 thesis.md 路径（提取上下文摘要，仅投资决策型适用）"
+    }
+  },
+  "output": {
+    "report": "string (markdown) — 摘要版裁决书：辩论精华 + 三区（共识/分歧/未决）+ 综合判断 + 结论产出（按命题类型分流），≤1200 字",
+    "transcript": "string (markdown) — 全程实录汇总稿：辩论赛标准格式，含三轮各角色发言 + 技术记录",
+    "r1_positions": "object — 5 角色的 R1 盲立论",
+    "r2_responses": "object — 5 角色的 R2 交叉回应",
+    "r3_defenses": "object — 5 角色的 R3 防御/修正",
+    "execution_mode": "string — workflow | subagent_dispatch | inline_roleplay",
+    "token_consumption": "string — 实测 token / 基线 token = X×"
+  },
+  "composition": {
+    "engine": "blind-debate-3round",
+    "phases": [
+      "BlindPosition",
+      "Aggregate",
+      "CrossResponse",
+      "Aggregate",
+      "Defense",
+      "Report"
+    ],
+    "hard_constraints": {
+      "R3_three_rounds": "R1 盲立论 → R2 交叉回应 → R3 防御/修正，3 轮 fan-out",
+      "R3_ref_requirement": "R2/R3 非沉默输出必须含 [ref:大师名#论点序号] 标记（奥斯本/黑格尔/贝叶斯/费曼/德博诺）",
+      "R3_isolation": "R1 互相不可见；R2/R3 只给原文不给摘要",
+      "R8_token_budget": "≤ 3.5× 单一强 prompt 基线，超限硬终止",
+      "R9_dual_output": "双产出：摘要版裁决书 + 全程实录汇总稿",
+      "R10_auto_polish": "报告生成后自动调用 liam-polish 润色，无需用户确认",
+      "R11_human_readable": "摘要版裁决书必须面向人读：禁止术语黑话，用自然段落不用标签式列表，普通人能直接读懂。鼓励类比和具象化表达，允许结构化表格",
+            "R12_synthesis_judgment": "摘要版裁决书含「综合判断」节，西塞罗补充所有角色未触及的维度（≤200字，可省略，必须标注非辩论共识，不可修正三区结论）",
+      "R13_conclusion_routing": "结论产出按命题类型分流：投资决策型给行动建议（建仓/加仓/减仓/清仓/维持/观望），选择决策型给结论与适用边界（采用/暂缓/否决/组合），认知求真型给结论采纳边界与验证跟踪清单（禁止虚构操作动作）",
+      "R14_host_persona": "主持人格西塞罗（编排层人格化，主 agent 扮演，快照 references/roles/host.md）：有程序权与记录权但没有裁决权，永不下场辩论；实录技术记录须注明「西塞罗与五方角色为同一模型，置信度推断不构成独立判断」",
+      "R15_archive": "交付物归档：双产出润色完成后以润色稿为正本归档至 docs/taixu-debate-reports/，命名 <topic_slug>-taixu-debate-report-<date>.md / <topic_slug>-taixu-debate-transcript-<date>.md（topic_slug 为英文小写短横线 3-6 词，开辩时由西塞罗从辩题提炼并写入 metadata.json）；过程文件写入本场运行目录 runtime/debate/<date>-<topic_slug>-<run_id>/（run_id 为开辩时刻 HHmmss，开辩时确定、全程不变；同一日期、同一话题的并行辩论也不得共用目录），仅保留过程文件（R1-R3 发言原文、metadata.json），不留交付物与双轨版本"
+    },
+    "subagent_types": [
+      "debate-divergent",
+      "debate-convergent",
+      "debate-verifier",
+      "debate-auditor",
+      "debate-integrator",
+      "debate-blind-judge"
+    ],
+    "fallback_chain": "workflow → subagent_dispatch → inline_roleplay",
+    "skill_dependencies": ["liam-polish"]
+  },
+  "dependencies": [
+    ".claude/agents/debate-divergent.md",
+    ".claude/agents/debate-convergent.md",
+    ".claude/agents/debate-verifier.md",
+    ".claude/agents/debate-auditor.md",
+    ".claude/agents/debate-integrator.md",
+    ".claude/agents/debate-blind-judge.md",
+    ".qoder/agents/debate-divergent.md",
+    ".qoder/agents/debate-convergent.md",
+    ".qoder/agents/debate-verifier.md",
+    ".qoder/agents/debate-auditor.md",
+    ".qoder/agents/debate-integrator.md",
+    ".qoder/agents/debate-blind-judge.md"
+  ],
+  "created": "2026-07-17",
+  "updated": "2026-07-18",
+  "version": "0.6.2"
+}

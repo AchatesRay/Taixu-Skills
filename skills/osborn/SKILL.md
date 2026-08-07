@@ -9,8 +9,8 @@ description: >
   即便用户未明确说"用 osborn"，当对话出现以下信号时也应主动建议使用：方案只有一条路想扩空间、
   团队讨论在同一批想法里打转、方向定了但觉得可能有更好的选择、用户说"还有别的思路吗""帮我想想还有什么可能"。
   不要等用户说出触发词才启动——识别意图比匹配关键词更重要。
-version: "2.4.0"
-last_updated: "2026-07-04"
+version: "2.5.0"
+last_updated: "2026-07-19"
 triggers:
   - osborn
   - 奥斯本
@@ -305,7 +305,7 @@ SCAMPER **是补盲工具不是主框架**。P1 已经铺开后，用七个算�
 | 用户中途退出 | 任意阶段用户说"够了"/"停"/"就这样" | 直接进 P3，整理当前已有想法为 idea-pool.md |
 | 用户跳过 P2 | 用户说"不需要 SCAMPER"/"不用视角轮换" | 允许 P1→P3 直连，idea-pool.md 中仅含 P1 段落 |
 | 主题无法发散 | P0-clarify 追问 2-3 轮后主题仍模糊 | 建议用 hegel --spec-only 做结构化需求规格化 |
-| 想法数量远不足 | P1 结束 < 15 个 | 显式告知并建议：继续发散 / 切换 SCAMPER / 调整主题范围 |
+| 想法数量远不足 | P1 结束或 idea-pool 封盘前，总数低于 problem_type 对应下限：deterministic 15 / mixed 30 / non_deterministic 50（口径锚定回归语料库 `evals/regression-corpus-phase1/2.json` 的 `expected_outputs.min_ideas`；语料库改档须同步本表） | **门禁**：低于下限必须二选一——①续跑发散（回 P1/P2 补足）；②显式降级声明：idea-pool frontmatter 记 `idea_count_floor: {expected: N, actual: M, downgraded: true, reason: "..."}`。禁止静默封盘 |
 | 维度轴失效 | 连续 2 次暂停某维度 0%，或单维度 >80% 且其余均 <20% | 提议重新定义维度轴，用户确认后按新轴重算覆盖率 |
 
 ## 与下游 skill 的衔接

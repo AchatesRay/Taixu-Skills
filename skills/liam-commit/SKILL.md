@@ -1,9 +1,10 @@
 ---
 name: liam-commit
-description: "创建清晰传达价值的git commit。触发词: commit, save changes."
+description: "Commit（提交）：创建清晰传达价值的git commit。触发词: commit, save changes."
 version: 1.0.0
 display_name: "Liam Commit"
 visibility: public
+disable-model-invocation: true
 ---
 
 # Git Commit

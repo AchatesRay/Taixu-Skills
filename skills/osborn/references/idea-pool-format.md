@@ -14,6 +14,13 @@ dimensions:
   - 维度2
   - 维度3
   - ...
+# 条件字段：仅当想法总数低于 problem_type 对应下限（det 15 / mixed 30 / non_det 50）
+# 且用户选择显式降级而非续跑时必填（SKILL.md 边界条件「想法数量远不足」门禁）：
+idea_count_floor:
+  expected: 50
+  actual: 26
+  downgraded: true
+  reason: "降级原因（必填）"
 ---
 ```
 

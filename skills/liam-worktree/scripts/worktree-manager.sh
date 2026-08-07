@@ -30,7 +30,7 @@ usage() {
 Usage: worktree-manager.sh create <branch-name> [from-branch]
 
 Creates .worktrees/<branch-name> with <branch-name> branched from
-[from-branch] (default: origin's default branch, or main).
+[from-branch] (default: current checked-out branch; falls back to origin's default branch).
 
 The main repo checkout is not modified; from-branch is fetched but
 not checked out.
@@ -165,7 +165,12 @@ create_worktree() {
 
   local default_branch
   default_branch=$(get_default_branch)
-  from_branch="${from_branch:-$default_branch}"
+  # 默认基点 = 当前检出分支（工作分支），而非 origin 默认分支。
+  # 实测教训（2026-07-27）：默认 main 会让 worktree 基点落后工作分支 Agent 数十 commit，
+  # 每次都要手动 reset 对齐。显式传 from-branch 仍可覆盖。
+  local current_branch
+  current_branch=$(git branch --show-current 2>/dev/null || true)
+  from_branch="${from_branch:-${current_branch:-$default_branch}}"
 
   local worktree_path="$WORKTREE_DIR/$branch_name"
   if [[ -d "$worktree_path" ]]; then
@@ -184,10 +189,17 @@ create_worktree() {
     echo "Warning: could not fetch origin/$from_branch; using local ref" >&2
   fi
 
-  # Prefer origin/<from> if available, else fall back to local ref.
-  local base_ref="origin/$from_branch"
-  if ! git rev-parse --verify "$base_ref" &>/dev/null; then
+  # 基点取本地当前分支时用本地 ref（本地工作分支通常领先 origin）；
+  # 其余情况优先 origin/<from>，不存在再回落本地 ref。
+  local base_ref
+  if [[ -n "$current_branch" && "$from_branch" == "$current_branch" ]] \
+     && git rev-parse --verify "$from_branch" &>/dev/null; then
     base_ref="$from_branch"
+  else
+    base_ref="origin/$from_branch"
+    if ! git rev-parse --verify "$base_ref" &>/dev/null; then
+      base_ref="$from_branch"
+    fi
   fi
 
   git worktree add -b "$branch_name" "$worktree_path" "$base_ref"

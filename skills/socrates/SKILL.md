@@ -3,22 +3,12 @@ name: socrates
 display_name: "苏格拉底诘问（外审）"
 description: >
   Argument audit (苏格拉底诘问): external claim quality review via fact-check + symmetry + independence.
-  Use when user says "审查这个论点", "苏格拉底", "socrates", "这个分析靠谱吗", "看空观点审查".
+  Use when user says "审查这个论点", "苏格拉底", "socrates", "这个分析靠谱吗", "看空观点审查", "/socrates".
   审查外部论点的质量（外审），与 feynman（内省自己的推理）互补。
 version: "1.0.0"
 visibility: public
 last_updated: "2026-06-26"
 kind: composed
-triggers:
-  - socrates
-  - 苏格拉底
-  - 诘问
-  - 审查这个论点
-  - 这个分析靠谱吗
-  - 看空观点审查
-  - bear case audit
-  - argument audit
-  - /socrates
 metadata:
   author: "Antifragile Research Team"
   philosophy: "对手的论证也需要审查——事实错误和论证技巧比真正的风险更常见"

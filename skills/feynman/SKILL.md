@@ -2,25 +2,11 @@
 name: feynman
 display_name: "太虚四转 · 破妄（费曼）"
 description: >
-  Output audit (太虚四转·破妄): six self-deception principles via blind sub-agent. Use when user says
-  "审查", "费曼", "feynman", "提交前把关".
-version: "2.5.0"
+  Audit（审查·太虚四转·破妄）: six self-deception principles via blind sub-agent. Use when user says
+  "审查", "费曼", "feynman", "提交前把关", "反自欺", "/feynman".
+version: "2.6.0"
 visibility: public
-last_updated: "2026-06-30"
-triggers:
-  - feynman
-  - 太虚四转
-  - 费曼
-  - 破妄
-  - 审查
-  - 审查一下
-  - 认知审查
-  - 原则审查
-  - 六原则
-  - 六原则审查
-  - don't fool yourself
-  - /feynman
-  - 反自欺
+last_updated: "2026-07-19"
 metadata:
 ---
 
@@ -31,131 +17,27 @@ metadata:
 
 ## 概述
 
-代码写完、PRD 交稿、方案落地。但里面有没有在骗自己？AI 写的东西越多，人的角色越偏向审查，但审查本身也有盲区。
-
-AI 倾向于自圆其说，会说"这样对"而不是"可能有问题"。人也一样，写完就不想推翻自己。这个 skill 用六条原则检查产出物：假设没验证就当事实用、猜测被包装成结论、为不存在的需求写了代码、顺手改了不该改的地方、用想象代替实验、制造真相副本而不是引用原始来源。审查员是独立子 Agent，只看变更产物，看不到对话历史，没法被你的理由说服。每条违规标注位置和修复建议，输出审查报告。
+代码写完、PRD 交稿，方案落地。但里面有没有在骗自己？AI 倾向于自圆其说，会说"这样对"而不是"可能有问题"。这个 skill 用六条原则检查产出物：假设没验证就当事实用、猜测被包装成结论，为不存在的需求写了代码、顺手改了不该改的地方，用想象代替实验、制造真相副本而不是引用原始来源。审查员是独立子 Agent，只看变更产物，看不到对话历史，没法被你的理由说服。
 
 太虚五转第四转：破妄（审查）。提交前跑一遍六原则，把自欺的部分找出来。
 
-## 这个 skill 做什么
-
-Linter 查语法，测试查行为，这个 skill 查的是——你有没有在骗自己。
-
-你说“应该是这样”——你验证了吗？你选了这个方案——考虑过更简单的吗？你改了这行——这是用户要求的还是你“顺手”的？你说“完成了”——跑了验证还是觉得不会出错？
-
-费曼说得好：*you are the easiest person to fool*。同一个 Agent 写的代码自己审，上下文全是“为什么这样做”的理由——你已经在为自己辩护了。所以审查员是独立的 subAgent，看不到你的对话历史，只看变更产物。
-
 ## 理论框架
 
-六条原则构成一条认知链，每一环防止特定类型的自欺：
-
-```
-停下来（P1）→ 锚定推理（P2）→ 设计要简（P3）→ 执行要准（P4）→ 验收要闭环（P5）→ 数据要溯源（P6）
-   │              │               │               │               │                │
-   防假设          防伪装确定性       防过度设计        防附带伤害        防自证清白          防真相漂移
-```
-
-| 原则 | 防止的自欺类型 | Feynman 语境 |
-|------|--------------|-------------|
-| P1 Think Before Coding | "我觉得是这样" | 你觉得不算数，证据才算 |
-| P2 Uncertainty Honesty | "这个值肯定是 X" | 你把猜测写成了事实 |
-| P3 Simplicity First | "万一以后需要呢" | 你在为不存在的需求写代码 |
-| P4 Surgical Changes | "顺手改一下" | 你在制造无法追溯的变更 |
-| P5 Goal-Driven | "应该没问题" | 你在用想象替代实验 |
-| P6 SSOT-First | "这里也写一份" | 你在制造终将与真相偏离的副本 |
+六条原则构成一条认知链：停下来（P1）→ 锚定推理（P2）→ 设计要简（P3）→ 执行要准（P4）→ 验收要闭环（P5）→ 数据要溯源（P6），分别防止假设伪装、伪装确定性，过度设计、附带伤害，自证清白、真相漂移。
 
 原则权威定义：`CLAUDE.md`（SSOT，运行时动态读取，不内联）。
 
-## 与 retro 的分工
-
-| 维度 | Feynman | Retro Step 6 |
-|------|---------|-------------|
-| 审查对象 | 代码 diff（变更产物） | 会话行为模式（做事过程） |
-| 证据来源 | `file:line` + diff 片段 | commit 历史 + 对话片段 |
-| 触发时机 | 改完代码后、提交前 | 会话结束时、里程碑后 |
-| 输出 | 通过/不通过 + 问题清单 | 合规率 + 行动项 |
-
 ## 执行模式：subAgent 独立审查（默认）
 
-### 为什么不能自己审查自己
+同一个 Agent 既写代码又审查代码，上下文里全是"为什么这样做"的理由——你在用已有的理由为自己辩护，不是在审查。**subAgent 隔离的是上下文，不是能力。** 审查者只拿到 diff + 原则 + checklist，看不到对话历史、用户请求，你的推理过程。
 
-同一个 Agent 既写代码又审查代码，上下文里全是"为什么这样做"的理由——你在用已有的理由为自己辩护，不是在审查。这就是 Feynman 说的 *"you are the easiest person to fool"*。
+Phase 1（收集变更）在主 Agent 完成，Phase 2 + Phase 3，审查 + 报告委派给 subAgent。主 Agent 向 subAgent 传递数据包（diff_content / changed_files / principles / checklist / report_template / problem_type），**禁止传递**对话历史、推理过程，用户评价、"为什么这样改"的解释。详见 [references/subagent-protocol.md](references/subagent-protocol.md)。
 
-**subAgent 隔离的是上下文，不是能力。** 审查者只拿到 diff + 原则 + checklist，看不到对话历史、用户请求、你的推理过程。它只能从变更产物本身判断是否自洽——这才是真正的审查。
-
-### 模式选择
-
-| 模式 | 触发条件 | 信号 |
-|------|---------|------|
-| **subAgent 独立审查**（默认） | Agent 工具可用 | 报告标注 `🔬 独立审查` |
-| **自我审查**（降级） | Agent 工具不可用或明确失败 | 报告标注 `⚠️ 自我审查（降级模式）` |
-
-**禁止在 subAgent 可用时主动选择自我审查。** 如果用户明确要求 `--self`，在报告中标注 `⚠️ 用户指定自我审查` 并说明局限性。
-
-### subAgent 委派协议
-
-Phase 1（收集变更）在主 Agent 完成，Phase 2 + Phase 3（审查 + 报告）委派给 subAgent。
-
-主 Agent 向 subAgent 传递的数据包（也是 subAgent 的**全部上下文**）：
-
-```
-1. diff_content     — git diff 输出（完整文本）
-2. changed_files    — 变更文件清单 + 分类 + 路由矩阵结果
-3. principles       — CLAUDE.md 中六原则的完整内容（运行时读取）
-4. checklist        — references/checklist.md 的完整内容
-5. report_template  — Phase 3 的报告格式模板
-6. problem_type     — 问题类型（可选，来自 pipeline osborn P0 判定，调整审查侧重）
-```
-
-**禁止传递的数据**（泄露会破坏独立性）：
-- 对话历史 / 用户原始需求描述
-- 主 Agent 的推理过程或决策理由
-- 用户对变更的评价或期望
-- "为什么这样改"的任何解释
-
-### subAgent prompt 模板
-
-主 Agent 向 subAgent 传递数据包（diff_content / changed_files / principles / checklist / report_template / problem_type），禁止传递对话历史。详见 [references/subagent-protocol.md](references/subagent-protocol.md)（含 prompt 模板 + 降级条件 + 深挖 prompt）。
-
-### 降级条件
-
-当以下任一条件成立时，允许降级到自我审查：
-1. Agent 工具调用失败（返回错误）
-2. subAgent 返回空结果或格式异常
-3. 用户明确传入 `--self` 参数
-
-降级时必须：
-- 在报告顶部标注 `⚠️ 自我审查（降级模式）— 审查结果可能受确认偏差影响`
-- 说明降级原因
-- 其余流程与 subAgent 审查一致
+模式选择、降级条件，problem_type 适配、--scope 模式说明，与 liam-retro 分工详见 [references/decision-tables.md](references/decision-tables.md)。
 
 ## 输入
 
-默认审查当前 git 工作区的未提交变更（`git diff` + `git diff --cached`）。
-也接受：
-- 指定文件路径：`/feynman path/to/file.py`
-- 指定 commit 范围：`/feynman HEAD~3..HEAD`
-- 指定 MR/PR：`/feynman !1234`
-- 存量审查：`/feynman --scope module path/to/dir`
-- 依赖链审查：`/feynman --scope deps`
-- `--problem-type`（可选，pipeline 传入）：调整审查侧重，不改变六原则覆盖
-
-### problem_type 适配
-
-| problem_type | 加严原则 | 审查侧重调整 |
-|--------------|---------|-------------|
-| deterministic | P1 Think Before Coding | 假设必须有形式化验证或可复现的实验证据，"我觉得对"不算数 |
-| non_deterministic | P2 Uncertainty Honesty | 所有定量结论必须标注置信区间或概率分布，禁止伪装为确定性 |
-| mixed | P1 + P2 平衡 | deterministic 子问题按 P1 加严，non_deterministic 子问题按 P2 加权 |
-| pending | 无调整 | 六原则均等审查（当前行为） |
-
-### --scope 模式说明
-
-| 模式 | 输入 | 审查范围 | 原则侧重 | 输出上限 | 触发场景 |
-|------|------|---------|----------|---------|---------|
-| diff（默认） | `git diff` | 仅变更行 | P1-P6 全覆盖 | 无限制 | 提交前 |
-| module | 指定目录全部代码文件 | 目录内 .py/.js/.ts | P3 + P6 为主，P1 + P5 辅助 | 最多 10 个问题 | 季度体检 / 重构前摸底 |
-| deps | diff 中函数的调用链（1 层） | diff + 直接依赖 | P1 + P2 为主 | 最多 5 个问题 | diff 审查中发现可疑依赖时追查 |
+默认审查当前 git 工作区的未提交变更（`git diff` + `git diff --cached`）。也接受：指定文件路径、指定 commit 范围，指定 MR/PR、存量审查（`--scope module`）、依赖链审查（`--scope deps`）、`--problem-type`，可选，pipeline 传入。
 
 ## 审查流程
 
@@ -170,129 +52,34 @@ Phase 1 收集变更（主Agent）──→ 委派 subAgent ──→ Phase 2+3 
 
 ### Phase 1: 收集变更
 
-#### diff 模式（默认）
+收集 diff（默认）、module，指定目录代码文件、或 deps，diff 函数的 1 层调用链。超过 50 个文件（module）或 20 个依赖文件（deps）时要求用户缩小范围。
 
-```bash
-# 默认：工作区变更
-git diff && git diff --cached
+**CHECKPOINT**：展示变更文件清单（{N}个文件，{+lines}+/{-lines}-），确认审查范围后继续。
 
-# 或：指定范围
-git diff <range> -- <paths>
-```
-
-#### module 模式
-
-```bash
-# 收集目标目录的代码文件
-find <path> -name "*.py" -o -name "*.js" -o -name "*.ts" | head -50
-```
-
-- 超过 50 个文件：要求用户缩小范围或指定子目录
-- CHECKPOINT 展示文件列表 + 总行数（`wc -l`）
-
-#### deps 模式
-
-```bash
-# 从 diff 提取变更函数签名
-# 向上：grep -rn "function_name" 找调用者
-# 向下：读取函数体，提取其调用的其他函数
-```
-
-- 自动从 diff 提取函数/方法签名
-- 追踪 1 层调用链（调用者 + 被调用者）
-- 将依赖文件加入审查范围
-- 超过 20 个依赖文件：只取与 diff 文件同模块的依赖
-
-#### 边界条件
-
-| 场景 | 处理 |
-|------|------|
-| 空 diff（无任何变更） | 告知用户"无变更可审查"，终止（仅 diff/deps 模式） |
-| CLAUDE.md 不存在 | 提示"原则定义文件不存在，无法执行审查"，终止 |
-| 超大 diff（>2000 行） | 按文件分批审查，每批完成后输出中间结果 |
-| 二进制文件 | 跳过，仅在报告中标注文件名 |
-| module 模式目录不存在 | 告知用户路径无效，终止 |
-
-列出所有变更文件，按影响分类并确定审查重点：
-
-#### 文件类型 x 原则路由矩阵
-
-| 文件类型 | P1 | P2 | P3 | P4 | P5 | P6 |
-|----------|:--:|:--:|:--:|:--:|:--:|:--:|
-| 代码文件 (.py/.js/.ts) | ● | ● | ● | ● | ● | ● |
-| 协议/模板 (.md scaffold) | ○ | ○ | ● | ● | ○ | ● |
-| 配置文件 (.json/.yaml) | ○ | ○ | ○ | ● | ○ | ● |
-| 测试文件 (*_test.*) | ○ | ○ | ● | ● | ● | ○ |
-
-● = 重点审查（逐条检查 checklist）　○ = 快速扫描（有明显问题才报）
-
-**CHECKPOINT**：展示变更文件清单（{N}个文件，{+lines}+/{-lines}-），确认审查范围后继续。用户说"跳过"则直接进入 Phase 2。
+文件类型×原则路由矩阵、边界条件，module/deps 审查聚焦策略详见 [references/decision-tables.md](references/decision-tables.md)。
 
 ### Phase 2: 逐原则审查
 
-**输入**：Phase 1 的文件清单 + 分类 + 路由矩阵
-**输出**：6 项判定（✅/⚠️/❌）+ 证据列表
+对每条原则，按路由矩阵决定审查深度：● 逐条过 checklist，○ 快速扫描。判定 ✅ 通过 / ⚠️ 警告 / ❌ 失败。**必须引用具体证据** —`file_path:line_number` + 代码片段或 diff 行。
 
-对每条原则，按路由矩阵决定审查深度：● 逐条过 checklist，○ 快速扫描。
-判定 ✅ 通过 / ⚠️ 警告 / ❌ 失败。
-
-**必须引用具体证据**：`file_path:line_number` + 代码片段或 diff 行。没有证据的判定无效。
-
-**判定分级**：❌ 判定区分"技术否决"（代码有明确错误）和"判断否决"（推翻设计决策）。判断否决必须附带可执行的反例验证步骤（30 秒内可跑、可证伪、声明预期）。附不出则降级为 ⚠️ 并标注 `[待验证]`。详见 [references/checklist.md](references/checklist.md) 判定权限章节。
+**判定分级**：❌ 判定区分"技术否决"（代码有明确错误）和"判断否决"，推翻设计决策。判断否决必须附带可执行的反例验证步骤，30 秒内可跑、可证伪，声明预期。附不出则降级为 ⚠️ 并标注 `[待验证]`。
 
 详细检查项见 [references/checklist.md](references/checklist.md)。
 
-#### 不确定点深挖（Bayes 联动）
-
-审查过程中，**仅在以下两个条件同时成立时**触发深挖：
-
-1. **判断否决**：审查员倾向给 ❌，但这是推翻设计决策（非代码明确错误）
-2. **证据不足**：现有上下文不足以构造可执行的反例验证步骤
-
-⚠️ 判定和 [待验证] 是审查的正常表达方式，不触发深挖。
-
-**深挖流程：**
-
-1. **标记**：将该点标注为 `[🔍 待深挖]`，记录当前置信度和不确定来源
-2. **委派调查**：启动 subAgent 执行定向验证（多个独立命题可通过并行 tool calls 同时委派）
-   - 传入：待验证的具体命题 + 相关代码上下文 + 可检查的证据路径
-   - subAgent 自主决定验证手段：读源码、grep 调用链、检查测试覆盖、查 git history 等
-3. **收集结果**：subAgent 返回后更新置信度，基于充分信息做最终判定
-4. **记录过程**：报告中该判定项附加 `[深挖]` 标签，展示调查路径和结论依据
-
-**Bayes 定位：** Bayes 是「结论深挖验证器」——Feynman 发现可疑点后委派 Bayes 做定向调查，类似审计师委托调查员取证。Bayes 也可独立于 Feynman 使用（用户直接验证某个判断的可靠性）。
-
-subAgent 深挖 prompt 模板详见 [references/subagent-protocol.md](references/subagent-protocol.md)。禁止在证据不足时凭"感觉"给 ❌。
-
-#### module/deps 模式的审查聚焦
-
-不逐行审查全部代码，而是按原则扫描特定模式：
-
-| 原则 | 扫描策略（module 模式） |
-|------|----------------------|
-| P3 | 大函数（>100 行）、深嵌套（>3 层）、未使用的抽象层 |
-| P6 | 重复常量、跨文件硬编码相同值、SSOT 路径散落 |
-| P1 | 未标注假设的外部依赖（API URL、超时值、格式假设） |
-| P5 | 无对应测试的关键路径 |
-
-| 原则 | 扫描策略（deps 模式） |
-|------|---------------------|
-| P1 | 依赖函数的前提假设是否仍成立（参数契约、返回值格式） |
-| P2 | 依赖链中的不确定性是否被上层伪装为确定性 |
+不确定点深挖（Bayes 联动）流程详见 [references/decision-tables.md](references/decision-tables.md) 深挖章节。subAgent 深挖 prompt 模板详见 [references/subagent-protocol.md](references/subagent-protocol.md)。
 
 ### Phase 3: 输出报告
 
-报告含 YAML frontmatter（veto_count）+ 逐项判定表（6原则 × ✅/⚠️/❌）+ 合规率 + 问题清单（file:line + 自欺 + 影响 + 建议 + 反例验证 + 深挖记录）+ 总结 + 下一步引导。判定阈值：6/6 通过，有⚠️无❌通过带建议，有❌不通过。详见 [references/report-format.md](references/report-format.md)（含报告模板 + 判定阈值 + BACKLOG 沉淀协议）。
+报告含 YAML frontmatter + 审查工作量量化 + 逐项判定表（6原则 × ✅/⚠️/❌）+ 合规率 + 问题清单 + 总结 + 下一步引导。判定阈值：6/6 通过，有⚠️无❌通过带建议，有❌不通过。详见 [references/report-format.md](references/report-format.md)。
 
 ## 不做的事
 
-- 不做安全审计（用 `cso` skill）
+- 不做安全审计（用 `liam-cso` skill）
 - 不做功能正确性测试（用单元测试 / e2e 测试）
 - 不做代码风格检查（用 linter）
 - 不修复问题——只报告。用户确认后再修
 - 默认（diff 模式）不审查存量代码，除非用户指定 `--scope module/deps`
-- 不审查会话行为模式（用 `retro` Step 6）
-
+- 不审查会话行为模式（用 `liam-retro` Step 6）
 
 ---
 
