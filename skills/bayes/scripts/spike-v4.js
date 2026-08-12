@@ -3,7 +3,7 @@ export const meta = {
   description: 'Spike：验证 v4.0 三条基础设施通路',
   phases: [
     { title: 'Bash-Python', detail: 'subagent 通过 Bash 调用 Python 脚本' },
-    { title: 'Idealab', detail: 'subagent 通过 Bash 调用 idealab_client.py' },
+    { title: 'Qwen', detail: 'subagent 通过 Bash 调用 qwen_client.py' },
     { title: 'WebSearch', detail: 'subagent 使用 web search 获取源文档' },
   ],
 }
@@ -36,19 +36,19 @@ python -c "from scripts.shared.opend_price_provider import is_opend_available; p
 log(`通路1 Bash→Python: ${bashPython.success ? '✅' : '❌'} ${bashPython.result}`)
 
 // ============================================================
-// 通路 2：subagent Bash → idealab_client.py → Qwen
+// 通路 2：subagent Bash → qwen_client.py → Qwen (DashScope)
 // ============================================================
-phase('Idealab')
-const idealab = await agent(`
-你的任务是验证能否通过 Bash 调用 idealab_client.py 获取 Qwen 的回答。
+phase('Qwen')
+const qwen = await agent(`
+你的任务是验证能否通过 Bash 调用 qwen_client.py 获取 Qwen 的回答。
 
 执行以下命令（在当前项目根目录下）：
-python scripts/shared/idealab_client.py --system "你是方向判断助手，只输出JSON" --user "康方生物(9926.HK)的HARMONi-6三期临床OS数据对公司估值的影响方向是什么？回答格式：{direction: positive/negative, reason: 一句话}" --json
+.venv/bin/python scripts/shared/qwen_client.py --system "你是方向判断助手，只输出JSON" --user "康方生物(9926.HK)的HARMONi-6三期临床OS数据对公司估值的影响方向是什么？回答格式：{direction: positive/negative, reason: 一句话}" --json
 
 报告执行结果。如果成功返回 success=true 和 Qwen 的回答内容；如果失败返回 success=false 和错误信息。
-`, { label: 'spike:idealab', phase: 'Idealab', schema: SPIKE_SCHEMA })
+`, { label: 'spike:qwen', phase: 'Qwen', schema: SPIKE_SCHEMA })
 
-log(`通路2 Idealab/Qwen: ${idealab.success ? '✅' : '❌'} ${idealab.result}`)
+log(`通路2 Qwen/DashScope: ${qwen.success ? '✅' : '❌'} ${qwen.result}`)
 
 // ============================================================
 // 通路 3：subagent web search
@@ -72,16 +72,16 @@ log(`通路3 WebSearch: ${webSearch.success ? '✅' : '❌'} ${webSearch.result}
 // ============================================================
 // 汇总
 // ============================================================
-const allPass = [bashPython, idealab, webSearch].every(r => r && r.success)
+const allPass = [bashPython, qwen, webSearch].every(r => r && r.success)
 log(`\n=== Spike 结果 ===`)
 log(`通路1 Bash→Python: ${bashPython?.success ? 'PASS' : 'FAIL'}`)
-log(`通路2 Idealab/Qwen: ${idealab?.success ? 'PASS' : 'FAIL'}`)
+log(`通路2 Qwen/DashScope: ${qwen?.success ? 'PASS' : 'FAIL'}`)
 log(`通路3 WebSearch: ${webSearch?.success ? 'PASS' : 'FAIL'}`)
 log(`总结: ${allPass ? '✅ 全部通过，可进入正式实现' : '❌ 有通路不通，需调整计划'}`)
 
 return {
   all_pass: allPass,
   bash_python: bashPython,
-  idealab: idealab,
+  qwen: qwen,
   web_search: webSearch,
 }

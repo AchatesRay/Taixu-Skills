@@ -9,7 +9,7 @@
 | 命题属于 no_reference_class | 没有可类比的历史案例，提前终止，返回 NOT_APPLICABLE |
 | thesis_path 不存在 | 直接基于你输入的结论文本继续 |
 | B1 API 不可用 | 标记该条数据查不到，不算已验证 |
-| B2 Idealab API 不可用 | 降级为 WebSearch 独立验证（Agent B 独立搜索+解读），标注 `degraded_mode`。详见 [b2-web-search-fallback.md](b2-web-search-fallback.md) |
+| B2 Qwen API (DashScope) 不可用 | 降级为 WebSearch 独立验证（Agent B 独立搜索+解读），标注 `degraded_mode`。详见 [b2-web-search-fallback.md](b2-web-search-fallback.md) |
 | B2 源搜索失败 | 标注"原始资料获取失败"，该条计入未覆盖 |
 | D2 区分力不足 | 预测太模糊无法验证，自动跳过 |
 | D7 未覆盖率 >50% | 输出警告：大部分预测没验到，不能说"没问题" |

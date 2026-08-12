@@ -191,10 +191,10 @@ $$\text{深度} = \text{模型预测被外部事实击穿的次数} \times \text
 | 级别 | 条件 | Agent A / Agent B 配置 | 真实独立性 |
 |------|------|----------------------|-----------|
 | L1（降级） | 仅有 Claude | 保守 prompt / 激进 prompt | 低：同模型同权重，仅 prompt bias 差 |
-| **L2（当前实现）** | Claude + Qwen3.7-Max | **Agent A = Claude（workflow 原生）/ Agent B = Qwen3.7-Max（Idealab API）** | 中-高：不同架构 + 不同训练语料（尤其中文域） |
+| **L2（当前实现）** | Claude + Qwen3.8-Max | **Agent A = Claude（workflow 原生）/ Agent B = Qwen3.8-Max（DashScope API）** | 中-高：不同架构 + 不同训练语料（尤其中文域） |
 | L3（扩展） | Claude + Qwen + Gemini | 三模型多数投票 | 高：结构性独立，盲区交集最小化 |
 
-**L2 为当前实现方案**：Agent B 优先使用 Qwen3.7-Max（通过 Idealab OpenAI 兼容接口调用），与 Claude 在架构和训练数据上完全独立——尤其在中文财经领域，Qwen 的中文语料覆盖与 Claude 存在结构性差异，这正是双读对抗需要的。同模型双 prompt（L1）仅在外部 API 不可用时作为降级方案。
+**L2 为当前实现方案**：Agent B 优先使用 Qwen3.8-Max（通过 DashScope OpenAI 兼容接口调用，scripts/shared/qwen_client.py），与 Claude 在架构和训练数据上完全独立——尤其在中文财经领域，Qwen 的中文语料覆盖与 Claude 存在结构性差异，这正是双读对抗需要的。同模型双 prompt（L1）仅在外部 API 不可用时作为降级方案。
 
 **覆盖率分层报告**（禁止用聚合数字制造虚假安全感）：
 

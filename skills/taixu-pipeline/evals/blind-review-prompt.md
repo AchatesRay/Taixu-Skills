@@ -156,7 +156,7 @@
 - 模型列表（从 .env 读取）：
   - **审查员 A**: Claude（当前会话模型，测"自审能力"）
   - **审查员 B**: Gemini（`GOOGLE_API_KEY` + `gemini-2.5-flash`）
-  - **审查员 C**: Qwen（`IDEALAB_AK` + `Qwen3.7-Max-DogFooding` 或 `DASHSCOPE_API_KEY`）
+  - **审查员 C**: Qwen（`DASHSCOPE_API_KEY` + `qwen3.8-max`，统一 llm_client）
 
 ### 3. 收集阶段
 

@@ -2,7 +2,7 @@
 
 ## 问题
 
-bayes B2 软验证默认使用 Claude + Qwen 双模型对抗解读。当 Qwen（通过 idealab_client.py）不可用时，B2 无法正常运行，Agent B 返回 `direction=ambiguous`，导致验证无效、D11 停留在 3-4 分。
+bayes B2 软验证默认使用 Claude + Qwen 双模型对抗解读。当 Qwen（通过 qwen_client.py，统一 llm_client 走 DashScope）不可用时，B2 无法正常运行，Agent B 返回 `direction=ambiguous`，导致验证无效、D11 停留在 3-4 分。
 
 ## 降级方案
 
@@ -30,7 +30,7 @@ bayes B2 软验证默认使用 Claude + Qwen 双模型对抗解读。当 Qwen（
 ## 降级触发与标注
 
 **触发条件**（任一即触发）：
-- idealab_client.py 不可用（文件不存在或执行报错）
+- qwen_client.py 不可用（文件不存在或执行报错）
 - Qwen API 返回错误或超时
 - 用户显式指定 `--verify-mode single`
 

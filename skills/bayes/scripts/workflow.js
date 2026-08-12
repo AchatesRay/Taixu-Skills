@@ -475,7 +475,7 @@ ${truncated}
 独立判断，不要预设结论。
 `, { label: `agentA:${pred.factor.slice(0, 20)}`, phase: 'SoftVerify', schema: DIRECTION_SCHEMA }),
 
-        // Agent B: Qwen 解读（通过 idealab_client.py + 文件传递），失败时降级为 WebSearch
+        // Agent B: Qwen 解读（通过 qwen_client.py + 文件传递），失败时降级为 WebSearch
         // W2 fix: 使用临时文件传递源文档，避免 shell 注入
         () => agent(`
 你的任务是对源文档做独立方向解读。
@@ -487,7 +487,7 @@ ${truncated}
      正面条件：${pred.if_thesis_correct.description}
      反面条件：${pred.if_thesis_wrong.description}
      源文档：${truncated}
-   - 通过 Bash 执行：python scripts/shared/idealab_client.py --system "你是投资方向判断助手。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
+   - 通过 Bash 执行：.venv/bin/python scripts/shared/qwen_client.py --system "你是投资方向判断助手。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
    - 如果成功，解析返回的 JSON，填入 schema 返回
 
 2. 如果 Qwen 不可用或调用失败，降级为 WebSearch 独立验证：
@@ -576,7 +576,7 @@ ${truncated}
      正面条件：${pred.if_thesis_correct.description}
      反面条件：${pred.if_thesis_wrong.description}
      代码片段：${truncated}
-   - 通过 Bash 执行：python scripts/shared/idealab_client.py --system "你是代码语义分析助手。分析代码片段，判断其对给定因子的方向性。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要（引用具体代码）, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
+   - 通过 Bash 执行：.venv/bin/python scripts/shared/qwen_client.py --system "你是代码语义分析助手。分析代码片段，判断其对给定因子的方向性。只输出JSON，格式：{direction: positive/negative/neutral/ambiguous, confidence: high/medium/low, key_evidence: 一句话摘要（引用具体代码）, source_quality: {entity_anchored: true/false, action_verb: true/false, authoritative_source: true/false}}" --user-file ${tmpFile} --json
    - 如果成功，解析返回的 JSON，填入 schema 返回
 
 2. 如果 Qwen 不可用或调用失败，降级为单模型双视角验证：

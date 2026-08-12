@@ -96,7 +96,7 @@ function judgeSurprise(predicted, actual) {
 | 信息输入 | `truncateSource(sourceText)` | 同一 `truncateSource(sourceText)` via 文件 | ✅ 相同 |
 | 系统提示 | 方向解读 + 源质量评估 | 同一任务（JSON 格式） | ✅ 等效 |
 | 输出格式 | DIRECTION_SCHEMA | 同一 schema | ✅ 相同 |
-| 通道隔离 | workflow subagent | idealab_client.py → Qwen API | ✅ 不同基座 |
+| 通道隔离 | workflow subagent | qwen_client.py → DashScope API | ✅ 不同基座 |
 
 ### Agreement 判定（4 分支）
 
@@ -214,7 +214,7 @@ report: string      # markdown 报告
 
 1. [x] depth-engine-principles v1.2 定稿
 2. [x] Spike 验证三条基础设施通路
-3. [x] idealab_client.py 实现
+3. [x] qwen_client.py 实现
 4. [x] workflow.js v4.0 重写
 5. [x] 康方"三年三倍"端到端测试
 6. [x] Code review + 修复 W1-W7
